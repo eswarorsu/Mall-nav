@@ -22,19 +22,6 @@ let html5QrCode = null;
 
 // ═══════════════════ INITIALIZATION ═══════════════════
 window.addEventListener('DOMContentLoaded', () => {
-    // Generate the Demo QR code for the blueprint
-    const qrContainer = document.getElementById('blueprint-qr');
-    if (qrContainer && typeof QRCode !== 'undefined') {
-        new QRCode(qrContainer, {
-            text: "MALL_NAV_2024",
-            width: 120,
-            height: 120,
-            colorDark : "#1a2236",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
-    }
-
     // AUTO-START CAMERA FOR MOBILE
     setTimeout(initCameraScanner, 1000);
 });
@@ -118,39 +105,6 @@ async function verifyAndLoad(scannedCode) {
 // ═══════════════════ UI & ACTIONS ═══════════════════
 async function startQRScan() {
     initCameraScanner();
-}
-
-async function syncQRToDatabase(qrCodeString) {
-    console.log("Generating QR for database sync...");
-    const tempDiv = document.createElement('div');
-    new QRCode(tempDiv, { text: qrCodeString, width: 256, height: 256 });
-
-    setTimeout(async () => {
-        const img = tempDiv.querySelector('img');
-        if (!img) return alert("Failed to generate QR image.");
-        const qrImageBase64 = img.src;
-        
-        const { error } = await sb
-            .from('blueprints')
-            .update({ qr_image: qrImageBase64 })
-            .eq('qr_code', qrCodeString);
-
-        if (error) console.error("Sync Error:", error);
-        else alert("QR Code has been saved to your Supabase database!");
-    }, 1000);
-}
-
-async function downloadQR(qrCodeString) {
-    const qrDiv = document.getElementById('blueprint-qr');
-    const img = qrDiv.querySelector('img');
-    if (!img) {
-        alert("QR Code not ready. Please wait a second.");
-        return;
-    }
-    const link = document.createElement('a');
-    link.download = `MallNav_QR_${qrCodeString}.png`;
-    link.href = img.src;
-    link.click();
 }
 
 function loadBlueprint(blueprint) {
