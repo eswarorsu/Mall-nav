@@ -50,7 +50,11 @@ function initCameraScanner() {
     }
     
     html5QrCode = new Html5Qrcode("reader");
-    const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+    const config = { 
+        fps: 25, // Increased from 15 to 25 for smoother scanning
+        qrbox: { width: 280, height: 280 }, // Slightly larger box
+        aspectRatio: 1.0
+    };
 
     html5QrCode.start(
         { facingMode: "environment" }, 
@@ -84,23 +88,28 @@ function onScanSuccess(decodedText, decodedResult) {
 function onScanFailure(error) {}
 
 async function verifyAndLoad(scannedCode) {
+    if (!scannedCode) return;
+    
     const hintEl = document.querySelector('.qr-hint');
     const titleEl = document.querySelector('.qr-title');
     
     titleEl.textContent = 'VERIFYING...';
-    hintEl.textContent = `Checking Database for: ${scannedCode}`;
+    hintEl.textContent = `Checking code: ${scannedCode.trim()}`;
     hintEl.style.color = '#14b8a6';
     
     try {
-        if (!sb) throw new Error("Supabase is not connected. Check your URL/Key.");
+        if (!sb) throw new Error("Supabase is not connected. Refresh and try again.");
         
-        console.log("📡 Querying code:", scannedCode);
-        
-        // Use a very basic query to avoid schema issues
+        // Stop camera if it was running (manual entry cleanup)
+        if (html5QrCode) {
+            try { await html5QrCode.stop(); } catch(e) {}
+        }
+
+        // Fetch from database
         const { data, error, status } = await sb
             .from('blueprints')
             .select('*') 
-            .eq('qr_code', scannedCode)
+            .eq('qr_code', scannedCode.trim())
             .single();
         
         if (error) {
