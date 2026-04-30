@@ -1,0 +1,62 @@
+{
+  "blueprints": [
+    {
+      "id": "MALL_NAV_2024",
+      "name": "Grand Mall Terminal",
+      "qr_code": "MALL_NAV_2024",
+      "data": {
+        "floors": [
+          { "id":0, "label":"G", "name":"GROUND FLOOR",
+            "stores":[
+              {"id":"g_zara", "x":8,  "y":8,  "w":95, "h":68, "lbl":"Zara"},
+              {"id":"g_hm",   "x":107,"y":8,  "w":100,"h":68, "lbl":"H&M"},
+              {"id":"g_sp",   "x":8,  "y":80, "w":199,"h":88, "lbl":"Sports Direct"},
+              {"id":"g_ap",   "x":258,"y":8,  "w":100,"h":156,"lbl":"Apple Store"},
+              {"id":"g_sam",  {"color": "#1428a0", "emoji": "📱"}, "x":362,"y":8,  "w":88, "h":75, "lbl":"Samsung"},
+              {"id":"g_jbl",  {"color": "#c0392b", "emoji": "🎧"}, "x":362,"y":87, "w":88, "h":77, "lbl":"JBL Audio"},
+              {"id":"g_ccd",  {"color": "#6f4e37", "emoji": "☕"}, "x":8,  "y":215,"w":95, "h":82, "lbl":"Café Coffee Day"},
+              {"id":"g_lu",   {"color": "#1a7a4a", "emoji": "🌸"}, "x":107,"y":215,"w":100,"h":82, "lbl":"Lush"},
+              {"id":"g_bk",   {"color": "#7b341e", "emoji": "📚"}, "x":8,  "y":301,"w":199,"h":88, "lbl":"Crossword Books"},
+              {"id":"g_fc",   {"color": "#c0582a", "emoji": "🍽️"}, "x":258,"y":215,"w":88, "h":82, "lbl":"Food Court"},
+              {"id":"g_kfc",  {"color": "#c8102e", "emoji": "🍗"}, "x":350,"y":215,"w":100,"h":82, "lbl":"KFC"},
+              {"id":"g_mcd",  {"color": "#da291c", "emoji": "🍔"}, "x":258,"y":301,"w":192,"h":88, "lbl":"McDonald's"}
+            ],
+            "pois":[
+              {"id":"g1", "name":"Men's Washroom",      "type":"washroom", "x":72,  "y":192, "desc":"West corridor"},
+              {"id":"g2", "name":"Women's Washroom",    "type":"washroom", "x":148, "y":192, "desc":"Center west"},
+              {"id":"g3", "name":"Information Desk",    "type":"info",     "x":235, "y":155, "desc":"Central hub"},
+              {"id":"g4", "name":"ATM — HDFC Bank",     "type":"atm",      "x":158, "y":108, "desc":"Northwest zone"},
+              {"id":"g5", "name":"Exit — North Gate",   "type":"exit",     "x":235, "y":8,   "desc":"Main north entrance"},
+              {"id":"g6", "name":"Exit — South Gate",   "type":"exit",     "x":235, "y":385, "desc":"South parking side"},
+              {"id":"g7", "name":"Exit — West Gate",    "type":"exit",     "x":8,   "y":192, "desc":"West side entrance"},
+              {"id":"g8", "name":"Exit — East Gate",    "type":"exit",     "x":490, "y":192, "desc":"East parking ramp"},
+              {"id":"g9", "name":"Dustbin",             "type":"dustbin",  "x":42,  "y":192, "desc":"West corridor"},
+              {"id":"g10","name":"Dustbin",             "type":"dustbin",  "x":430, "y":192, "desc":"East corridor"},
+              {"id":"g11","name":"Dustbin",             "type":"dustbin",  "x":235, "y":34,  "desc":"North corridor"},
+              {"id":"g12","name":"Dustbin",             "type":"dustbin",  "x":235, "y":362, "desc":"South corridor"},
+              {"id":"g13","name":"Elevator / Lift",     "type":"elevator", "x":235, "y":220, "desc":"Central elevator bank"},
+              {"id":"g14","name":"Medical Aid Post",    "type":"medical",  "x":408, "y":52,  "desc":"Northeast wing"},
+              {"id":"g15","name":"Food Stall — Subway", "type":"food",     "x":305, "y":258, "desc":"Food court area"},
+              {"id":"g16","name":"Chai Point",          "type":"food",     "x":57,  "y":258, "desc":"Southwest zone"},
+              {"id":"g17","name":"Washroom (Family)",   "type":"washroom", "x":328, "y":192, "desc":"East of center"}
+            ]
+          }
+        ],
+        "store_meta": {
+          "Zara":         { "color":"#1a1a2e", "emoji":"👗" },
+          "H&M":          { "color":"#d4001f", "emoji":"👕" },
+          "Sports Direct":{ "color":"#1a472a", "emoji":"⚽" },
+          "Apple Store":  { "color":"#444",    "emoji":"🍎" },
+          "Samsung":      { "color":"#1428a0", "emoji":"📱" },
+          "JBL Audio":    { "color":"#c0392b", "emoji":"🎧" },
+          "Café Coffee Day":{ "color":"#6f4e37", "emoji":"☕" },
+          "Lush":         { "color":"#1a7a4a", "emoji":"🌸" },
+          "Crossword Books":{ "color":"#7b341e", "emoji":"📚" },
+          "Food Court":   { "color":"#c0582a", "emoji":"🍽️" },
+          "KFC":          { "color":"#c8102e", "emoji":"🍗" },
+          "McDonald's":   { "color":"#da291c", "emoji":"🍔" }
+        }
+      }
+    }
+  ]
+}

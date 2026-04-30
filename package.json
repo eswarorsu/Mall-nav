@@ -1,0 +1,12 @@
+{
+  "name": "mall-map-navigator",
+  "version": "1.0.0",
+  "description": "Premium Mall Interior Map Navigator",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y browser-sync start --server --files \"*.html, *.css, *.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
