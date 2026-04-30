@@ -123,6 +123,19 @@ async function syncQRToDatabase(qrCodeString) {
     }, 500);
 }
 
+async function downloadQR(qrCodeString) {
+    const qrDiv = document.getElementById('blueprint-qr');
+    const img = qrDiv.querySelector('img');
+    if (!img) {
+        alert("QR Code not ready. Please wait a second.");
+        return;
+    }
+    const link = document.createElement('a');
+    link.download = `MallNav_QR_${qrCodeString}.png`;
+    link.href = img.src;
+    link.click();
+}
+
 function loadBlueprint(blueprint) {
     const payload = blueprint.data || blueprint;
     FLOORS = payload.floors || [];
@@ -303,3 +316,4 @@ window.selectPOI = selectPOI;
 window.clearSel = () => { selPOI=null; document.getElementById('info-panel').classList.remove('on'); renderMap(); renderList(); };
 window.navToStore = () => { alert("Navigating..."); };
 window.syncQRToDatabase = syncQRToDatabase;
+window.downloadQR = downloadQR;
