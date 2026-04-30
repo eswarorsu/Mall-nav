@@ -13,10 +13,11 @@ const NS='http://www.w3.org/2000/svg';
 // ═══════════════════ STATE ═══════════════════
 let curFloor=0, selPOI=null, activeCat='all', query='', selStore=null, offersCache={};
 let FLOORS = [], STORE_META = {};
+let html5QrCode = null;
 
 // ═══════════════════ INITIALIZATION ═══════════════════
 window.addEventListener('DOMContentLoaded', () => {
-    // Generate the Demo QR code
+    // Generate the Demo QR code for the blueprint
     const qrContainer = document.getElementById('blueprint-qr');
     if (qrContainer && typeof QRCode !== 'undefined') {
         new QRCode(qrContainer, {
@@ -28,56 +29,106 @@ window.addEventListener('DOMContentLoaded', () => {
             correctLevel : QRCode.CorrectLevel.H
         });
     }
+
+    // AUTO-START CAMERA FOR MOBILE
+    initCameraScanner();
 });
 
-// ═══════════════════ QR SCANNER LOGIC ═══════════════════
-async function startQRScan() {
-    const btn = document.querySelector('.qr-btn');
-    btn.disabled = true;
-    btn.textContent = 'SCANNING...';
+// ═══════════════════ HARDWARE CAMERA LOGIC ═══════════════════
+function initCameraScanner() {
+    if (typeof Html5Qrcode === 'undefined') return;
     
-    // Simulate real-world scanning delay
-    setTimeout(async () => {
-        const scannedCode = "MALL_NAV_2024"; // The code read by camera
+    html5QrCode = new Html5Qrcode("reader");
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+    // Try starting with the BACK camera (environment)
+    html5QrCode.start(
+        { facingMode: "environment" }, 
+        config, 
+        onScanSuccess, 
+        onScanFailure
+    ).catch(err => {
+        console.warn("Camera access failed. Is it blocked?", err);
+        document.getElementById('reader').innerHTML = `<div style="color:white; padding:20px; text-align:center; font-size:12px;">Camera blocked. Please enable permissions.</div>`;
+    });
+}
+
+function onScanSuccess(decodedText, decodedResult) {
+    console.log(`Code matched: ${decodedText}`, decodedResult);
+    
+    // Stop the camera once we have a result
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            console.log("Camera stopped.");
+            verifyAndLoad(decodedText);
+        });
+    }
+}
+
+function onScanFailure(error) {
+    // This is called constantly while searching, usually safe to ignore
+    // console.warn(`QR error = ${error}`);
+}
+
+async function verifyAndLoad(scannedCode) {
+    const statusEl = document.querySelector('.qr-hint');
+    statusEl.textContent = 'Verifying blueprint...';
+    
+    try {
+        if (!supabase) throw new Error("Supabase client not initialized.");
         
-        try {
-            if (!supabase) throw new Error("Supabase client not initialized.");
-            
-            // Query the 'blueprints' table in Supabase
-            const { data, error } = await supabase
-                .from('blueprints')
-                .select('*')
-                .eq('qr_code', scannedCode)
-                .single();
-            
-            if (error) throw error;
-            if (!data) throw new Error("Blueprint not found.");
-            
-            // Successfully fetched from LIVE Supabase database!
-            console.log("Blueprint fetched from Supabase:", data.name);
-            loadBlueprint(data);
-            
-        } catch (err) {
-            console.error("Database error:", err.message);
-            alert(`Reality Check Failed: ${err.message}\n\nMake sure your Supabase table 'blueprints' exists and has a row where qr_code='MALL_NAV_2024'.`);
-            btn.disabled = false;
-            btn.textContent = 'RETRY SCAN';
-        }
-    }, 1800);
+        // Query Supabase for the scanned code
+        const { data, error } = await supabase
+            .from('blueprints')
+            .select('*')
+            .eq('qr_code', scannedCode)
+            .single();
+        
+        if (error) throw error;
+        if (!data) throw new Error("This QR code is not registered with MallNav.");
+        
+        loadBlueprint(data);
+        
+    } catch (err) {
+        alert(err.message);
+        // Restart camera if verification fails
+        initCameraScanner();
+    }
+}
+
+// ═══════════════════ UI & ACTIONS ═══════════════════
+async function startQRScan() {
+    // This button now acts as a manual camera refresh
+    if (html5QrCode && html5QrCode.isScanning) {
+        alert("Camera is already active. Point it at a QR code.");
+    } else {
+        initCameraScanner();
+    }
+}
+
+async function syncQRToDatabase(qrCodeString) {
+    console.log("Generating QR for database sync...");
+    const tempDiv = document.createElement('div');
+    new QRCode(tempDiv, { text: qrCodeString, width: 256, height: 256 });
+
+    setTimeout(async () => {
+        const qrImageBase64 = tempDiv.querySelector('img').src;
+        const { error } = await supabase
+            .from('blueprints')
+            .update({ qr_image: qrImageBase64 })
+            .eq('qr_code', qrCodeString);
+
+        if (error) console.error("Sync Error:", error);
+        else alert("QR Code has been saved to your Supabase database!");
+    }, 500);
 }
 
 function loadBlueprint(blueprint) {
-    // Inject the real data from Supabase
-    // Note: We expect the table to have a 'data' column with 'floors' and 'store_meta'
     const payload = blueprint.data || blueprint;
     FLOORS = payload.floors || [];
     STORE_META = payload.store_meta || {};
     
-    // Transition UI
-    const qrScreen = document.getElementById('qr-screen');
-    qrScreen.classList.add('hidden');
-    
-    // Start the secondary initialization animation
+    document.getElementById('qr-screen').classList.add('hidden');
     setTimeout(initScan, 500);
 }
 
@@ -101,24 +152,19 @@ function renderMap(){
   const floor=FLOORS[curFloor], g=document.getElementById('map-g');
   if(!g) return;
   g.innerHTML='';
-  // Outer
   g.appendChild(el('rect',{x:0,y:0,width:500,height:400,rx:10,fill:'#e8e4dc',stroke:'#b0aca4','stroke-width':1.5}));
-  // Corridors
   g.appendChild(el('rect',{x:0,y:172,width:500,height:40,fill:'#f5f2ec'}));
   g.appendChild(el('rect',{x:215,y:0,width:40,height:400,fill:'#f5f2ec'}));
   g.appendChild(el('rect',{x:215,y:172,width:40,height:40,fill:'#f9f7f4'}));
   g.appendChild(el('line',{x1:0,y1:192,x2:500,y2:192,stroke:'#ccc8c0','stroke-width':0.5,'stroke-dasharray':'5 5'}));
   g.appendChild(el('line',{x1:235,y1:0,x2:235,y2:400,stroke:'#ccc8c0','stroke-width':0.5,'stroke-dasharray':'5 5'}));
 
-  // Stores
   floor.stores.forEach(s=>{
-    const sg=document.createElementNS(NS,'g');
-    sg.style.cursor='pointer';
+    const sg=document.createElementNS(NS,'g'); sg.style.cursor='pointer';
     const isSel=selStore&&selStore.id===s.id;
     const fillColor=STORE_COLORS[s.lbl]||'#d0ccc6';
     const r=el('rect',{x:s.x,y:s.y,width:s.w,height:s.h,rx:3,fill:fillColor,stroke:isSel?'#14b8a6':'#a8a49c','stroke-width':isSel?2:0.5});
     sg.appendChild(r);
-
     if(s.lbl){
       const fs=Math.min(10,(s.w-8)/s.lbl.length*1.35);
       sg.appendChild(tx(s.lbl,{x:s.x+s.w/2,y:s.y+s.h/2,'text-anchor':'middle','dominant-baseline':'central','font-size':fs,fill:'#5a5650','font-family':'DM Sans,sans-serif'}));
@@ -128,19 +174,15 @@ function renderMap(){
       sg.appendChild(tx('✦',{x:s.x+12,y:s.y+7.5,'text-anchor':'middle','dominant-baseline':'central','font-size':7.5,fill:'white'}));
     }
     sg.addEventListener('click',()=>openStore(s));
-    sg.addEventListener('mouseenter',()=>{ if(!isSel){ r.setAttribute('stroke','#14b8a6'); r.setAttribute('stroke-width','1'); } });
-    sg.addEventListener('mouseleave',()=>{ if(!isSel){ r.setAttribute('stroke','#a8a49c'); r.setAttribute('stroke-width','0.5'); } });
     g.appendChild(sg);
   });
 
-  // Nav path & POIs
   if(selPOI){ const poi=floor.pois.find(p=>p.id===selPOI); if(poi) drawPath(g,poi); }
   const visible=new Set(filtered().map(p=>p.id));
   floor.pois.forEach(poi=>{
     const show=visible.has(poi.id);
     const color=CAT_COLOR[poi.type]||'#888', label=CAT_LABEL[poi.type]||'?', isSel=selPOI===poi.id;
-    const mg=document.createElementNS(NS,'g');
-    mg.style.cursor='pointer'; mg.style.opacity=show?'1':'0.12';
+    const mg=document.createElementNS(NS,'g'); mg.style.cursor='pointer'; mg.style.opacity=show?'1':'0.12';
     mg.onclick=()=>selectPOI(poi.id);
     if(isSel) mg.appendChild(el('circle',{cx:poi.x,cy:poi.y,r:14,fill:color,opacity:0.2,class:'yah-pulse'}));
     mg.appendChild(el('circle',{cx:poi.x,cy:poi.y,r:isSel?9:7,fill:color,stroke:'white','stroke-width':isSel?2.5:1.5}));
@@ -148,7 +190,6 @@ function renderMap(){
     g.appendChild(mg);
   });
 
-  // YAH
   g.appendChild(el('circle',{cx:YAH.x,cy:YAH.y,r:12,fill:'#14b8a6',opacity:0.22,class:'yah-pulse'}));
   g.appendChild(el('circle',{cx:YAH.x,cy:YAH.y,r:7,fill:'white',stroke:'#14b8a6','stroke-width':2}));
   g.appendChild(el('circle',{cx:YAH.x,cy:YAH.y,r:3.5,fill:'#14b8a6'}));
@@ -161,7 +202,6 @@ function drawPath(g,poi){
   g.appendChild(el('path',{d,fill:'none',stroke:'#14b8a6','stroke-width':2,'stroke-dasharray':'7 5','stroke-linecap':'round',class:'nav-path'}));
 }
 
-// ═══════════════════ UI & NAVIGATION ═══════════════════
 function openStore(store){
   selStore=store;
   const meta=STORE_META[store.lbl]||{color:'#555',emoji:'🏪'};
@@ -194,7 +234,6 @@ function selectPOI(id){
   renderMap(); renderList();
 }
 
-// ═══════════════════ HELPERS ═══════════════════
 function filtered(){
   return (FLOORS[curFloor]?.pois || []).filter(p=>{
     const mc=activeCat==='all'||p.type===activeCat;
@@ -238,7 +277,6 @@ function initScan(){
   },600);
 }
 
-// ═══════════════════ AI OFFERS (MOCKED) ═══════════════════
 async function loadOffers(store){
   const list = document.getElementById('offers-list'); if(!list) return;
   list.innerHTML='<div class="skeleton" style="height:50px;width:100%;"></div>';
@@ -256,7 +294,6 @@ async function loadOffers(store){
   }, 1000);
 }
 
-// Global exposure
 window.startQRScan = startQRScan;
 window.switchFloor = (i) => { curFloor=i; renderMap(); renderList(); };
 window.onSearch = () => { query=document.getElementById('search-inp').value; renderMap(); renderList(); };
@@ -265,3 +302,4 @@ window.closeDrawer = closeDrawer;
 window.selectPOI = selectPOI;
 window.clearSel = () => { selPOI=null; document.getElementById('info-panel').classList.remove('on'); renderMap(); renderList(); };
 window.navToStore = () => { alert("Navigating..."); };
+window.syncQRToDatabase = syncQRToDatabase;

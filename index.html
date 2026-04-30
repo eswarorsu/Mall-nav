@@ -188,8 +188,10 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
     <!-- ══ QR SCANNER SCREEN ══ -->
     <div id="qr-screen">
         <div class="qr-video-container">
-            <div class="qr-video-mock"></div>
-            <div class="qr-viewfinder">
+            <!-- REAL CAMERA FEED -->
+            <div id="reader" style="width: 100%; height: 100%; object-fit: cover;"></div>
+            
+            <div class="qr-viewfinder" style="pointer-events: none;">
                 <div class="qr-corner tl"></div>
                 <div class="qr-corner tr"></div>
                 <div class="qr-corner bl"></div>
@@ -207,6 +209,7 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
         <div id="demo-qr-panel" style="margin-top:20px; display:flex; flex-direction:column; align-items:center; gap:10px;">
             <div id="blueprint-qr" style="background:white; padding:10px; border-radius:8px;"></div>
             <div style="color:rgba(255,255,255,0.4); font-size:10px; letter-spacing:1px;">DEMO QR: MALL_NAV_2024</div>
+            <button class="qr-btn" style="margin-top:5px; border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.5);" onclick="syncQRToDatabase('MALL_NAV_2024')">SAVE QR TO DATABASE</button>
         </div>
     </div>
 
@@ -342,6 +345,7 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
     </div>
 
     <!-- Scripts -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="script.js"></script>
