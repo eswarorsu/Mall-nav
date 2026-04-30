@@ -243,10 +243,13 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
                 <span class="app-name">MALLNAV</span>
                 <span class="app-tagline">INDOOR NAVIGATION</span>
             </div>
-            <div class="floor-tabs">
-                <button class="floor-tab active" onclick="switchFloor(0)">G</button>
-                <button class="floor-tab" onclick="switchFloor(1)">1F</button>
-                <button class="floor-tab" onclick="switchFloor(2)">2F</button>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div class="floor-tabs">
+                    <button class="floor-tab active" onclick="switchFloor(0)">G</button>
+                    <button class="floor-tab" onclick="switchFloor(1)">1F</button>
+                    <button class="floor-tab" onclick="switchFloor(2)">2F</button>
+                </div>
+                <button onclick="logout()" style="background:rgba(255,255,255,0.1); border:none; border-radius:8px; color:white; padding:6px 12px; font-size:11px; font-weight:600; cursor:pointer; font-family:'DM Sans';">LOGOUT</button>
             </div>
         </header>
 

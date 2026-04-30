@@ -318,6 +318,26 @@ async function loadOffers(store){
   }, 1000);
 }
 
+function logout() {
+    // 1. Hide the app and show the scanner
+    document.getElementById('app').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('qr-screen').classList.remove('hidden');
+        document.getElementById('qr-screen').style.opacity = '1';
+        
+        // 2. Clear state
+        FLOORS = [];
+        STORE_META = {};
+        selStore = null;
+        selPOI = null;
+        
+        // 3. Restart camera
+        initCameraScanner();
+    }, 500);
+}
+
+window.logout = logout;
 window.startQRScan = startQRScan;
 window.switchFloor = (i) => { curFloor=i; renderMap(); renderList(); };
 window.onSearch = () => { query=document.getElementById('search-inp').value; renderMap(); renderList(); };
