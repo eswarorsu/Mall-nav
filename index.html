@@ -14,23 +14,69 @@
 }
 body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
 
-/* ── QR SCANNER GATE ── */
-#qr-screen { position:fixed; inset:0; background:#0a0e17; z-index:500; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:all 0.8s cubic-bezier(0.4,0,0.2,1); }
+/* ── QR SCANNER GATE (CHILLOUT THEME) ── */
+#qr-screen { 
+    position:fixed; inset:0; 
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); 
+    z-index:500; display:flex; flex-direction:column; align-items:center; justify-content:center; 
+    transition:all 0.8s cubic-bezier(0.4,0,0.2,1); 
+    overflow: hidden;
+}
+#qr-screen::before {
+    content: ""; position: absolute; top: -10%; right: -10%; width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
 #qr-screen.hidden { opacity:0; pointer-events:none; transform:scale(1.1); }
-.qr-video-container { width:320px; height:320px; position:relative; border-radius:24px; overflow:hidden; background:#1a2236; border:1px solid rgba(255,255,255,0.05); }
-#reader { width: 100%; height: 100%; background: #000; overflow: hidden; }
-.qr-viewfinder { position:absolute; inset:50px; border:2px solid rgba(255,255,255,0.1); border-radius:12px; pointer-events:none; z-index:10; }
-.qr-corner { position:absolute; width:20px; height:20px; border:3px solid var(--teal); }
-.qr-corner.tl { top:-2px; left:-2px; border-right:0; border-bottom:0; border-radius:8px 0 0 0; }
-.qr-corner.tr { top:-2px; right:-2px; border-left:0; border-bottom:0; border-radius:0 8px 0 0; }
-.qr-corner.bl { bottom:-2px; left:-2px; border-right:0; border-top:0; border-radius:0 0 0 8px; }
-.qr-corner.br { bottom:-2px; right:-2px; border-left:0; border-top:0; border-radius:0 0 8px 0; }
-.qr-scan-line { position:absolute; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, var(--teal), transparent); top:0; animation:qrScan 2s infinite ease-in-out; }
-@keyframes qrScan { 0%,100% {top:0%} 50% {top:100%} }
-.qr-info { margin-top:30px; text-align:center; color:white; }
-.qr-title { font-family:'Space Mono', monospace; font-size:18px; letter-spacing:4px; color:var(--teal); margin-bottom:8px; }
-.qr-hint { font-size:12px; color:rgba(255,255,255,0.4); letter-spacing:1px; line-height:1.6; max-width:280px; }
-.qr-btn { margin-top:20px; background:transparent; border:1px solid var(--teal); color:var(--teal); padding:10px 20px; border-radius:12px; font-family:'Space Mono', monospace; font-size:10px; cursor:pointer; letter-spacing:2px; }
+
+.qr-header { text-align:center; margin-bottom:40px; position:relative; }
+.qr-title-box { 
+    border: 3px solid white; padding: 10px 40px; border-radius: 60px;
+    display: inline-block; box-shadow: 0 0 30px rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.02);
+    backdrop-filter: blur(10px);
+}
+.qr-title { 
+    font-family:'Space Mono', monospace; font-size:32px; font-weight: 700;
+    letter-spacing:12px; color:white; margin: 0;
+}
+.qr-subtitle {
+    margin-top: 15px; color: rgba(255,255,255,0.4); font-size: 11px;
+    letter-spacing: 4px; text-transform: uppercase; font-family: 'Space Mono';
+}
+
+.qr-video-container { 
+    width:340px; height:340px; position:relative; border-radius:40px; 
+    overflow:hidden; background:#000; 
+    border:8px solid rgba(255,255,255,0.05); 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+#reader { width: 100%; height: 100%; background: #000; }
+
+.qr-viewfinder { position:absolute; inset:40px; pointer-events:none; z-index:10; }
+.qr-corner { position:absolute; width:40px; height:40px; border:6px solid var(--teal); }
+.qr-corner.tl { top:-5px; left:-5px; border-right:0; border-bottom:0; border-radius:20px 0 0 0; }
+.qr-corner.tr { top:-5px; right:-5px; border-left:0; border-bottom:0; border-radius:0 20px 0 0; }
+.qr-corner.bl { bottom:-5px; left:-5px; border-right:0; border-top:0; border-radius:0 0 0 20px; }
+.qr-corner.br { bottom:-5px; right:-5px; border-left:0; border-top:0; border-radius:0 0 20px 0; }
+
+.qr-scan-line { 
+    position:absolute; left:0; right:0; height:4px; 
+    background:linear-gradient(90deg, transparent, var(--teal), var(--teal), transparent); 
+    top:0; animation:qrScan 2.5s infinite ease-in-out; 
+    box-shadow: 0 0 15px var(--teal);
+}
+
+.chill-illustration {
+    position: absolute; bottom: -20px; right: -50px; width: 250px; opacity: 0.6;
+    pointer-events: none; transform: rotate(-5deg); filter: drop-shadow(0 0 20px rgba(0,0,0,0.3));
+}
+
+.qr-controls { margin-top:40px; width:300px; display:flex; flex-direction:column; gap:12px; z-index: 10; }
+.manual-input-box { display:flex; gap:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:6px; }
+#manual-code-input { flex:1; background:transparent; border:none; color:white; padding:12px; font-family:''Space Mono''; font-size:14px; text-align:center; outline:none; }
+.go-btn { background:white; color:#0f172a; border:none; border-radius:15px; padding:0 24px; cursor:pointer; font-weight:800; font-family:''DM Sans''; transition: transform 0.2s; }
+.go-btn:active { transform: scale(0.95); }
 
 /* ── SCAN OVERLAY (LOADING) ── */
 #scan-overlay { position:fixed; inset:0; background:var(--navy); display:none; flex-direction:column; align-items:center; justify-content:center; z-index:300; transition:opacity 0.7s; opacity:0; }
@@ -142,8 +188,15 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
 </head>
 <body>
 
-    <!-- ══ QR SCANNER GATE ── -->
+    <!-- ══ QR SCANNER GATE (CHILLOUT THEME) ── -->
     <div id="qr-screen">
+        <div class="qr-header">
+            <div class="qr-title-box">
+                <h1 class="qr-title">CHILLOUT</h1>
+            </div>
+            <div class="qr-subtitle">Unlock Your Navigation</div>
+        </div>
+
         <div class="qr-video-container">
             <div id="reader"></div>
             <div class="qr-viewfinder">
@@ -152,22 +205,21 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
                 <div class="qr-scan-line"></div>
             </div>
         </div>
-        <div class="qr-info">
-            <div class="qr-title">SCAN BLUEPRINT</div>
-            <div class="qr-hint">Position the MallNav QR code within the frame to unlock the map</div>
-        </div>
-        <div style="margin-top:20px; display:flex; flex-direction:column; gap:8px; width:280px;">
-            <div style="display:flex; gap:8px;">
-                <input type="text" id="manual-code-input" placeholder="ENTER CODE" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; color:white; padding:10px; font-family:'Space Mono'; font-size:12px; text-align:center; outline:none;">
-                <button onclick="verifyAndLoad(document.getElementById('manual-code-input').value)" style="background:var(--teal); border:none; border-radius:12px; color:white; padding:0 18px; cursor:pointer; font-weight:bold;">GO</button>
+
+        <div class="qr-controls">
+            <div class="manual-input-box">
+                <input type="text" id="manual-code-input" placeholder="ENTER ACCESS CODE">
+                <button class="go-btn" onclick="verifyAndLoad(document.getElementById('manual-code-input').value)">GO</button>
             </div>
-            <button class="qr-btn" onclick="document.getElementById('qr-input-file').click()">🖼️ UPLOAD FROM GALLERY</button>
+            <button class="qr-btn" onclick="document.getElementById('qr-input-file').click()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px; border-radius: 20px; font-family: 'Space Mono'; font-size: 11px; cursor: pointer; letter-spacing: 2px;">🖼️ SCAN FROM PHOTO</button>
             <input type="file" id="qr-input-file" accept="image/*" style="display:none;" onchange="scanFile(this)">
         </div>
+
+        <img src="chillout_cartoon_bg_1777593448195.png" class="chill-illustration">
         
-        <!-- AUTO TEST LINK -->
+        <!-- BYPASS LINK -->
         <div style="margin-top:20px;">
-            <a href="javascript:void(0)" onclick="verifyAndLoad('MALL_NAV_2024')" style="color:var(--teal); font-size:9px; text-decoration:none; opacity:0.3; font-family:'Space Mono'; letter-spacing:1px;">BYPASS SCANNER (TEST: MALL_NAV_2024)</a>
+            <a href="javascript:void(0)" onclick="verifyAndLoad('MALL_NAV_2024')" style="color:rgba(255,255,255,0.2); font-size:9px; text-decoration:none; font-family:'Space Mono'; letter-spacing:1px;">BYPASS FOR TESTING</a>
         </div>
     </div>
 
