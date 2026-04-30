@@ -304,5 +304,3 @@ window.closeDrawer = closeDrawer;
 window.selectPOI = selectPOI;
 window.clearSel = () => { selPOI=null; document.getElementById('info-panel').classList.remove('on'); renderMap(); renderList(); };
 window.navToStore = () => { alert("Navigating..."); };
-window.syncQRToDatabase = syncQRToDatabase;
-window.downloadQR = downloadQR;

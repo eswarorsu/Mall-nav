@@ -12,14 +12,14 @@
               {"id":"g_hm",   "x":107,"y":8,  "w":100,"h":68, "lbl":"H&M"},
               {"id":"g_sp",   "x":8,  "y":80, "w":199,"h":88, "lbl":"Sports Direct"},
               {"id":"g_ap",   "x":258,"y":8,  "w":100,"h":156,"lbl":"Apple Store"},
-              {"id":"g_sam",  {"color": "#1428a0", "emoji": "📱"}, "x":362,"y":8,  "w":88, "h":75, "lbl":"Samsung"},
-              {"id":"g_jbl",  {"color": "#c0392b", "emoji": "🎧"}, "x":362,"y":87, "w":88, "h":77, "lbl":"JBL Audio"},
-              {"id":"g_ccd",  {"color": "#6f4e37", "emoji": "☕"}, "x":8,  "y":215,"w":95, "h":82, "lbl":"Café Coffee Day"},
-              {"id":"g_lu",   {"color": "#1a7a4a", "emoji": "🌸"}, "x":107,"y":215,"w":100,"h":82, "lbl":"Lush"},
-              {"id":"g_bk",   {"color": "#7b341e", "emoji": "📚"}, "x":8,  "y":301,"w":199,"h":88, "lbl":"Crossword Books"},
-              {"id":"g_fc",   {"color": "#c0582a", "emoji": "🍽️"}, "x":258,"y":215,"w":88, "h":82, "lbl":"Food Court"},
-              {"id":"g_kfc",  {"color": "#c8102e", "emoji": "🍗"}, "x":350,"y":215,"w":100,"h":82, "lbl":"KFC"},
-              {"id":"g_mcd",  {"color": "#da291c", "emoji": "🍔"}, "x":258,"y":301,"w":192,"h":88, "lbl":"McDonald's"}
+              {"id":"g_sam",  "x":362,"y":8,  "w":88, "h":75, "lbl":"Samsung"},
+              {"id":"g_jbl",  "x":362,"y":87, "w":88, "h":77, "lbl":"JBL Audio"},
+              {"id":"g_ccd",  "x":8,  "y":215,"w":95, "h":82, "lbl":"Café Coffee Day"},
+              {"id":"g_lu",   "x":107,"y":215,"w":100,"h":82, "lbl":"Lush"},
+              {"id":"g_bk",   "x":8,  "y":301,"w":199,"h":88, "lbl":"Crossword Books"},
+              {"id":"g_fc",   "x":258,"y":215,"w":88, "h":82, "lbl":"Food Court"},
+              {"id":"g_kfc",  "x":350,"y":215,"w":100,"h":82, "lbl":"KFC"},
+              {"id":"g_mcd",  "x":258,"y":301,"w":192,"h":88, "lbl":"McDonald's"}
             ],
             "pois":[
               {"id":"g1", "name":"Men's Washroom",      "type":"washroom", "x":72,  "y":192, "desc":"West corridor"},
