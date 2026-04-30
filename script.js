@@ -70,14 +70,15 @@ async function verifyAndLoad(scannedCode) {
     try {
         if (!sb) throw new Error("Supabase is not initialized. Check your URL/Key.");
         
-        const { data, error } = await sb.from('blueprints').select('*').eq('qr_code', code).single();
+        // Use .maybeSingle() instead of .single() to avoid the "Cannot coerce" error
+        const { data, error } = await sb.from('blueprints').select('*').eq('qr_code', code).maybeSingle();
         
         if (error) {
             console.error("Supabase Error:", error);
-            throw new Error(`Database: ${error.message || "Code not found"}`);
+            throw new Error(`Database: ${error.message}`);
         }
         
-        if (!data) throw new Error("No blueprint found for this code.");
+        if (!data) throw new Error(`Access Denied: Code "${code}" not found.`);
 
         // Success!
         titleEl.textContent = 'ACCESS GRANTED';
