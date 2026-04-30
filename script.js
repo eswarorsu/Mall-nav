@@ -196,7 +196,48 @@ function selectPOI(id) {
 
 async function loadOffers(store) {
     const list = document.getElementById('offers-list');
-    list.innerHTML = '<div class="offer-card new"><div class="offer-pill new">✨ NEW</div><div class="offer-title">15% Off Membership</div><div class="offer-desc">Exclusive discount for app users.</div><div class="offer-footer"><div class="offer-exp">⏱ Today Only</div></div></div>';
+    list.innerHTML = '<div class="skeleton" style="height:60px; width:100%; margin-bottom:10px;"></div>';
+    
+    // Simulate a network delay for the AI effect
+    setTimeout(() => {
+        const storeName = store.lbl || "this store";
+        let deals = [];
+
+        // Dynamic logic based on store name
+        if (storeName.includes('Zara') || storeName.includes('H&M') || storeName.includes('Lifestyle')) {
+            deals = [
+                { title: `End of Season Sale`, desc: `Up to 50% off on all winter collections at ${storeName}.`, type: 'hot', icon: '🔥' },
+                { title: `Buy 2 Get 1 Free`, desc: `Exclusive offer on basic tees and accessories.`, type: 'new', icon: '✨' }
+            ];
+        } else if (storeName.includes('Apple') || storeName.includes('Samsung')) {
+            deals = [
+                { title: `Exchange Bonus`, desc: `Get extra ₹5000 off when you trade in your old device.`, type: 'new', icon: '📱' },
+                { title: `Zero Cost EMI`, desc: `Available on all latest flagship models for 12 months.`, type: 'hot', icon: '⚡' }
+            ];
+        } else if (storeName.includes('Food') || storeName.includes('KFC') || storeName.includes('McDonald')) {
+            deals = [
+                { title: `Lunch Combo @ ₹199`, desc: `Choose your favorite burger, fries, and a large coke.`, type: 'hot', icon: '🍔' },
+                { title: `Free Dessert`, desc: `Complimentary sundae on orders above ₹500.`, type: 'new', icon: '🍦' }
+            ];
+        } else {
+            deals = [
+                { title: `Storewide Discount`, desc: `Flash sale! Get 10% instant discount at ${storeName}.`, type: 'hot', icon: '💰' },
+                { title: `Welcome Gift`, desc: `Free gift voucher for the first 50 customers today.`, type: 'new', icon: '🎁' }
+            ];
+        }
+
+        list.innerHTML = deals.map(d => `
+            <div class="offer-card ${d.type}">
+                <div class="offer-pill ${d.type}">${d.icon} ${d.type.toUpperCase()}</div>
+                <div class="offer-title">${d.title}</div>
+                <div class="offer-desc">${d.desc}</div>
+                <div class="offer-footer">
+                    <div class="offer-exp">⏱ Limited Time</div>
+                    <div class="offer-code">SAVE${Math.floor(Math.random()*90 + 10)}</div>
+                </div>
+            </div>
+        `).join('');
+    }, 600);
 }
 
 function logout() {
