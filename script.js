@@ -79,26 +79,45 @@ function onScanSuccess(decodedText, decodedResult) {
 function onScanFailure(error) {}
 
 async function verifyAndLoad(scannedCode) {
-    const statusEl = document.querySelector('.qr-hint');
-    statusEl.textContent = 'Verifying blueprint...';
+    const hintEl = document.querySelector('.qr-hint');
+    const titleEl = document.querySelector('.qr-title');
+    
+    titleEl.textContent = 'VERIFYING...';
+    hintEl.textContent = `Checking code: ${scannedCode}`;
+    hintEl.style.color = '#14b8a6';
     
     try {
-        if (!sb) throw new Error("Supabase client not initialized.");
+        if (!sb) throw new Error("Database connection not established.");
         
+        // 1. Fetch from database using the scanned unique code
         const { data, error } = await sb
             .from('blueprints')
             .select('*')
             .eq('qr_code', scannedCode)
             .single();
         
-        if (error) throw error;
-        if (!data) throw new Error("This QR code is not registered.");
+        if (error) throw new Error("Invalid or unregistered QR code.");
+        if (!data) throw new Error("Blueprint data missing in database.");
         
+        // 2. Access Granted! Load the map
+        titleEl.textContent = 'ACCESS GRANTED';
+        hintEl.textContent = `Opening ${data.name}...`;
         loadBlueprint(data);
         
     } catch (err) {
-        alert(err.message);
-        initCameraScanner();
+        titleEl.textContent = 'SCAN FAILED';
+        titleEl.style.color = '#ef4444';
+        hintEl.textContent = err.message;
+        hintEl.style.color = '#ef4444';
+        
+        // Restart camera after a short delay so they can try again
+        setTimeout(() => {
+            titleEl.textContent = 'SCAN BLUEPRINT';
+            titleEl.style.color = '#14b8a6';
+            hintEl.textContent = 'Position the MallNav QR code within the frame';
+            hintEl.style.color = 'rgba(255,255,255,0.4)';
+            initCameraScanner();
+        }, 3000);
     }
 }
 
