@@ -68,10 +68,18 @@ function initCameraScanner() {
 }
 
 function onScanSuccess(decodedText, decodedResult) {
-    console.log(`Code matched: ${decodedText}`, decodedResult);
+    // 1. Clean the scanned text (remove spaces/newlines)
+    const cleanCode = decodedText.trim();
+    console.log("🔍 Scanned Unique Code:", cleanCode);
+    
     if (html5QrCode) {
+        // Stop the camera immediately to prevent multiple scans
         html5QrCode.stop().then(() => {
-            verifyAndLoad(decodedText);
+            console.log("⏹️ Camera stopped.");
+            verifyAndLoad(cleanCode);
+        }).catch(err => {
+            console.warn("Camera stop failed, but proceeding to verify:", err);
+            verifyAndLoad(cleanCode);
         });
     }
 }
@@ -83,34 +91,43 @@ async function verifyAndLoad(scannedCode) {
     const titleEl = document.querySelector('.qr-title');
     
     titleEl.textContent = 'VERIFYING...';
-    hintEl.textContent = `Checking code: ${scannedCode}`;
+    hintEl.textContent = `Checking Database for: ${scannedCode}`;
     hintEl.style.color = '#14b8a6';
     
     try {
-        if (!sb) throw new Error("Database connection not established.");
+        if (!sb) throw new Error("Database connection not established. Refresh and try again.");
         
-        // 1. Fetch from database using the scanned unique code
+        console.log("📡 Querying Supabase for code:", scannedCode);
+        
+        // Fetch from database
         const { data, error } = await sb
             .from('blueprints')
             .select('*')
             .eq('qr_code', scannedCode)
             .single();
         
-        if (error) throw new Error("Invalid or unregistered QR code.");
-        if (!data) throw new Error("Blueprint data missing in database.");
+        if (error) {
+            console.error("Database Query Error:", error);
+            throw new Error(`Code '${scannedCode}' not found in database.`);
+        }
         
-        // 2. Access Granted! Load the map
+        if (!data) throw new Error("No data found for this code.");
+        
+        console.log("✅ Match Found:", data.name);
+        
+        // Access Granted! Load the map
         titleEl.textContent = 'ACCESS GRANTED';
-        hintEl.textContent = `Opening ${data.name}...`;
+        hintEl.textContent = `Unlocking ${data.name}...`;
         loadBlueprint(data);
         
     } catch (err) {
+        console.error("Verification failed:", err.message);
         titleEl.textContent = 'SCAN FAILED';
         titleEl.style.color = '#ef4444';
         hintEl.textContent = err.message;
         hintEl.style.color = '#ef4444';
         
-        // Restart camera after a short delay so they can try again
+        // Wait 3 seconds and restart camera
         setTimeout(() => {
             titleEl.textContent = 'SCAN BLUEPRINT';
             titleEl.style.color = '#14b8a6';
