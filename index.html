@@ -169,13 +169,6 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
         <div style="margin-top:20px;">
             <a href="javascript:void(0)" onclick="verifyAndLoad('MALL_NAV_2024')" style="color:var(--teal); font-size:9px; text-decoration:none; opacity:0.3; font-family:'Space Mono'; letter-spacing:1px;">BYPASS SCANNER (TEST: MALL_NAV_2024)</a>
         </div>
-
-        <!-- QR PREVIEW STATION -->
-        <div id="qr-preview-station" style="margin-top:40px; text-align:center; padding:20px; background:rgba(255,255,255,0.03); border:1px dashed rgba(255,255,255,0.1); border-radius:20px; width:280px;">
-            <div style="font-family:'Space Mono'; color:rgba(255,255,255,0.4); font-size:9px; margin-bottom:15px; letter-spacing:2px;">ACCESS CODE: MALL_NAV_2024</div>
-            <div id="blueprint-qr" style="background:white; padding:12px; border-radius:12px; display:inline-block; margin-bottom:15px;"></div>
-            <button onclick="downloadQR('MALL_NAV_2024')" style="width:100%; background:white; color:black; border:none; border-radius:10px; padding:8px; font-size:10px; font-weight:700; cursor:pointer; font-family:'DM Sans';">📥 DOWNLOAD QR FOR PRINT</button>
-        </div>
     </div>
 
     <!-- ══ SCAN OVERLAY (LOADING ANIMATION) ── -->
@@ -282,7 +275,6 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
