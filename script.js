@@ -68,17 +68,14 @@ function initCameraScanner() {
 }
 
 function onScanSuccess(decodedText, decodedResult) {
-    // 1. Clean the scanned text (remove spaces/newlines)
+    // 1. Clean the scanned text
     const cleanCode = decodedText.trim();
-    console.log("🔍 Scanned Unique Code:", cleanCode);
+    console.log("🔍 Scanned Text Code:", cleanCode);
     
     if (html5QrCode) {
-        // Stop the camera immediately to prevent multiple scans
         html5QrCode.stop().then(() => {
-            console.log("⏹️ Camera stopped.");
             verifyAndLoad(cleanCode);
         }).catch(err => {
-            console.warn("Camera stop failed, but proceeding to verify:", err);
             verifyAndLoad(cleanCode);
         });
     }
@@ -100,8 +97,8 @@ async function verifyAndLoad(scannedCode) {
         // Use ONLY the text code for verification
         const { data, error } = await sb
             .from('blueprints')
-            .select('name, data') // Only fetch the name and the map data
-            .eq('qr_code', scannedCode) // Verification by TEXT match
+            .select('name, data') 
+            .eq('qr_code', scannedCode) 
             .single();
         
         if (error || !data) {
