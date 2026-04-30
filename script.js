@@ -61,30 +61,48 @@ async function scanFile(input) {
 async function verifyAndLoad(scannedCode) {
     const hintEl = document.querySelector('.qr-hint');
     const titleEl = document.querySelector('.qr-title');
+    const code = scannedCode.trim();
+    
     titleEl.textContent = 'VERIFYING...';
-    hintEl.textContent = `Matching: ${scannedCode}`;
+    hintEl.textContent = `Checking code: [${code}]`;
+    hintEl.style.color = "var(--teal)";
 
     try {
-        if (!sb) throw new Error("Supabase Connection Fail");
-        const { data, error } = await sb.from('blueprints').select('*').eq('qr_code', scannedCode.trim()).single();
-        if (error || !data) throw new Error("Code not found in database.");
-
-        // Gated Access Granted -> Show Loading Animation
-        document.getElementById('qr-screen').classList.add('hidden');
-        FLOORS = data.data.floors || [];
-        STORE_META = data.data.store_meta || {};
+        if (!sb) throw new Error("Supabase is not initialized. Check your URL/Key.");
         
-        // Start the blueprint boot sequence (from user template)
-        startBootSequence();
+        const { data, error } = await sb.from('blueprints').select('*').eq('qr_code', code).single();
+        
+        if (error) {
+            console.error("Supabase Error:", error);
+            throw new Error(`Database: ${error.message || "Code not found"}`);
+        }
+        
+        if (!data) throw new Error("No blueprint found for this code.");
+
+        // Success!
+        titleEl.textContent = 'ACCESS GRANTED';
+        hintEl.textContent = `Loading ${data.name}...`;
+        
+        setTimeout(() => {
+            document.getElementById('qr-screen').classList.add('hidden');
+            FLOORS = data.data.floors || [];
+            STORE_META = data.data.store_meta || {};
+            startBootSequence();
+        }, 800);
         
     } catch (err) {
+        console.error("Auth Error:", err);
         titleEl.textContent = 'ACCESS DENIED';
         hintEl.textContent = err.message;
+        hintEl.style.color = "#ff4444";
+        
+        // Let them try again after a few seconds
         setTimeout(() => {
             titleEl.textContent = 'SCAN BLUEPRINT';
             hintEl.textContent = 'Position the MallNav QR code within the frame';
-            initCameraScanner();
-        }, 3000);
+            hintEl.style.color = "rgba(255,255,255,0.4)";
+            if (!html5QrCode?.isScanning) initCameraScanner();
+        }, 4000);
     }
 }
 
