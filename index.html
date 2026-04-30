@@ -189,9 +189,9 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
     <div id="qr-screen">
         <div class="qr-video-container">
             <!-- REAL CAMERA FEED -->
-            <div id="reader" style="width: 100%; height: 100%; object-fit: cover;"></div>
+            <div id="reader" style="width: 100%; height: 100%; background: #000; overflow: hidden; position: relative;"></div>
             
-            <div class="qr-viewfinder" style="pointer-events: none;">
+            <div class="qr-viewfinder" style="pointer-events: none; z-index: 10;">
                 <div class="qr-corner tl"></div>
                 <div class="qr-corner tr"></div>
                 <div class="qr-corner bl"></div>

@@ -38,18 +38,40 @@ window.addEventListener('DOMContentLoaded', () => {
 function initCameraScanner() {
     if (typeof Html5Qrcode === 'undefined') return;
     
-    html5QrCode = new Html5Qrcode("reader");
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    // Check if protocol is secure (Required for camera)
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+        const readerEl = document.getElementById('reader');
+        readerEl.innerHTML = `
+            <div style="color:#ef4444; padding:30px; text-align:center; font-family:'DM Sans', sans-serif;">
+                <div style="font-size:24px; margin-bottom:10px;">🔒</div>
+                <div style="font-weight:600; margin-bottom:8px;">Insecure Connection</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.6); line-height:1.4;">
+                    Browser blocks camera on non-HTTPS sites.<br>Please use <b>https://</b> to test on mobile.
+                </div>
+            </div>
+        `;
+        return;
+    }
 
-    // Try starting with the BACK camera (environment)
+    if (html5QrCode) {
+        try { html5QrCode.clear(); } catch(e) {}
+    }
+    
+    html5QrCode = new Html5Qrcode("reader");
+    const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+
     html5QrCode.start(
         { facingMode: "environment" }, 
         config, 
         onScanSuccess, 
         onScanFailure
     ).catch(err => {
-        console.warn("Camera access failed. Is it blocked?", err);
-        document.getElementById('reader').innerHTML = `<div style="color:white; padding:20px; text-align:center; font-size:12px;">Camera blocked. Please enable permissions.</div>`;
+        console.error("Camera start error:", err);
+        const readerEl = document.getElementById('reader');
+        let msg = "Camera access denied or not found.";
+        if (err.toString().includes("NotAllowedError")) msg = "Please allow camera permissions in your browser settings.";
+        
+        readerEl.innerHTML = `<div style="color:white; padding:40px; text-align:center; font-size:12px; opacity:0.7;">${msg}</div>`;
     });
 }
 
