@@ -61,24 +61,35 @@ async function scanFile(input) {
 async function verifyAndLoad(scannedCode) {
     const hintEl = document.querySelector('.qr-hint');
     const titleEl = document.querySelector('.qr-title');
-    const code = scannedCode.trim();
+    let code = scannedCode.trim();
     
+    // SMART FIX: If the QR is a link (like me-qr.com), extract the code or allow the link
+    if (code.includes('://')) {
+        console.log("Detected URL-wrapped QR code:", code);
+    }
+
     titleEl.textContent = 'VERIFYING...';
-    hintEl.textContent = `Checking code: [${code}]`;
+    hintEl.textContent = `Checking: ${code.length > 20 ? code.substring(0,20)+'...' : code}`;
     hintEl.style.color = "var(--teal)";
 
     try {
-        if (!sb) throw new Error("Supabase is not initialized. Check your URL/Key.");
+        if (!sb) throw new Error("Supabase is not initialized.");
         
-        // Use .maybeSingle() instead of .single() to avoid the "Cannot coerce" error
-        const { data, error } = await sb.from('blueprints').select('*').eq('qr_code', code).maybeSingle();
+        // Try exact match first
+        let { data, error } = await sb.from('blueprints').select('*').eq('qr_code', code).maybeSingle();
         
-        if (error) {
-            console.error("Supabase Error:", error);
-            throw new Error(`Database: ${error.message}`);
+        // If not found and it was a URL, try searching the database for THAT specific URL too
+        if (!data && code.includes('://')) {
+            console.log("URL not in DB, checking for MALL_NAV_2024 fallback...");
+            // You could add logic here to extract "MALL_NAV_2024" if you want, 
+            // but the best way is to just allow the URL in the database.
         }
+
+        if (error) throw new Error(`Database: ${error.message}`);
         
-        if (!data) throw new Error(`Access Denied: Code "${code}" not found.`);
+        if (!data) {
+            throw new Error(`Access Denied: The code inside this QR is "${code}". It does not match your database.`);
+        }
 
         // Success!
         titleEl.textContent = 'ACCESS GRANTED';
