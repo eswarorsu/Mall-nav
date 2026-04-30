@@ -205,6 +205,9 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
         </div>
         <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px; width:100%; max-width:280px;">
             <button class="qr-btn" style="margin-top:0;" onclick="startQRScan()">REFRESH CAMERA</button>
+            <button class="qr-btn" style="margin-top:0; border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.6);" onclick="document.getElementById('qr-input-file').click()">🖼️ SCAN FROM PHOTO</button>
+            <input type="file" id="qr-input-file" accept="image/*" style="display:none;" onchange="scanFile(this)">
+            
             <div style="text-align:center; color:rgba(255,255,255,0.2); font-size:10px; font-family:'Space Mono'; margin:5px 0;">— OR —</div>
             <div id="manual-input-box" style="display:flex; gap:8px;">
                 <input type="text" id="manual-code-input" placeholder="ENTER CODE" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:white; padding:10px; font-family:'Space Mono'; font-size:12px; outline:none; text-align:center;">

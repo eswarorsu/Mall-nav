@@ -87,6 +87,26 @@ function onScanSuccess(decodedText, decodedResult) {
 
 function onScanFailure(error) {}
 
+async function scanFile(input) {
+    if (input.files && input.files.length > 0) {
+        const imageFile = input.files[0];
+        const hintEl = document.querySelector('.qr-hint');
+        hintEl.textContent = "Processing image...";
+        
+        const html5QrCodeFile = new Html5Qrcode("reader");
+        try {
+            const decodedText = await html5QrCodeFile.scanFile(imageFile, true);
+            console.log("📸 Scanned from Image:", decodedText);
+            verifyAndLoad(decodedText);
+        } catch (err) {
+            console.error("Image Scan Error:", err);
+            alert("No QR code found in this image. Please try a clearer photo.");
+            hintEl.textContent = "Position the QR code within the frame";
+        }
+    }
+}
+
+window.scanFile = scanFile;
 async function verifyAndLoad(scannedCode) {
     if (!scannedCode) return;
     
