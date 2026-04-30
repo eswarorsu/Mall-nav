@@ -88,22 +88,28 @@ async function verifyAndLoad(scannedCode) {
     const titleEl = document.querySelector('.qr-title');
     
     titleEl.textContent = 'VERIFYING...';
-    hintEl.textContent = `Matching text: ${scannedCode}`;
+    hintEl.textContent = `Checking Database for: ${scannedCode}`;
     hintEl.style.color = '#14b8a6';
     
     try {
-        if (!sb) throw new Error("Connection Error. Please refresh.");
+        if (!sb) throw new Error("Supabase is not connected. Check your URL/Key.");
         
-        // Use ONLY the text code for verification
-        const { data, error } = await sb
+        console.log("📡 Querying code:", scannedCode);
+        
+        // Use a very basic query to avoid schema issues
+        const { data, error, status } = await sb
             .from('blueprints')
-            .select('name, data') 
-            .eq('qr_code', scannedCode) 
+            .select('*') 
+            .eq('qr_code', scannedCode)
             .single();
         
-        if (error || !data) {
-            throw new Error(`The code '${scannedCode}' is not in the database.`);
+        if (error) {
+            console.error("Supabase Error:", error);
+            // This will show the EXACT error message on your phone screen
+            throw new Error(`DB Error [${status}]: ${error.message}`);
         }
+        
+        if (!data) throw new Error(`Code '${scannedCode}' not found in database.`);
         
         // Success!
         titleEl.textContent = 'MATCH FOUND';
@@ -111,16 +117,17 @@ async function verifyAndLoad(scannedCode) {
         loadBlueprint(data);
         
     } catch (err) {
-        console.error("Verification error:", err.message);
-        titleEl.textContent = 'INVALID CODE';
+        console.error("Full Error Details:", err);
+        titleEl.textContent = 'SYSTEM ERROR';
         titleEl.style.color = '#ef4444';
-        hintEl.textContent = err.message;
-        hintEl.style.color = '#ef4444';
+        
+        // Display the detailed error for the user to see
+        hintEl.innerHTML = `<span style="color:#ff6b6b; font-weight:bold;">${err.message}</span><br>Check Supabase Table/Policies.`;
         
         setTimeout(() => {
             titleEl.textContent = 'SCAN BLUEPRINT';
             titleEl.style.color = '#14b8a6';
-            hintEl.textContent = 'Position the QR code text within the frame';
+            hintEl.textContent = 'Position the QR code within the frame';
             hintEl.style.color = 'rgba(255,255,255,0.4)';
             initCameraScanner();
         }, 3000);
