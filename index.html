@@ -4,49 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MallNav — Indoor Navigation System</title>
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="MallNav: The most advanced indoor navigation system for seamless shopping mall exploration. Find stores, facilities, and exclusive AI-powered offers.">
-    <meta name="keywords" content="indoor navigation, mall map, wayfinding, shopping assistant, smart mall">
-    
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- Styles -->
-    <!-- Styles -->
     <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --navy: #1a2236; --teal: #14b8a6; --teal-d: #0d9488; --gold: #eab308;
+  --navy: #1a2236; --teal: #14b8a6; --teal-d: #0d9488;
 }
 body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
 
-/* ── QR SCANNER OVERLAY ── */
+/* ── QR SCANNER GATE ── */
 #qr-screen { position:fixed; inset:0; background:#0a0e17; z-index:500; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:all 0.8s cubic-bezier(0.4,0,0.2,1); }
 #qr-screen.hidden { opacity:0; pointer-events:none; transform:scale(1.1); }
-
-.qr-video-container { width:320px; height:320px; position:relative; border-radius:24px; overflow:hidden; background:#1a2236; box-shadow:0 0 50px rgba(20,184,166,0.15); border:1px solid rgba(255,255,255,0.05); }
-.qr-video-mock { position:absolute; inset:0; background:linear-gradient(45deg, #1a2236 25%, #232d45 50%, #1a2236 75%); background-size:200% 200%; animation:shimmer 3s infinite linear; opacity:0.6; }
-.qr-viewfinder { position:absolute; inset:50px; border:2px solid rgba(255,255,255,0.1); border-radius:12px; }
+.qr-video-container { width:320px; height:320px; position:relative; border-radius:24px; overflow:hidden; background:#1a2236; border:1px solid rgba(255,255,255,0.05); }
+#reader { width: 100%; height: 100%; background: #000; overflow: hidden; }
+.qr-viewfinder { position:absolute; inset:50px; border:2px solid rgba(255,255,255,0.1); border-radius:12px; pointer-events:none; z-index:10; }
 .qr-corner { position:absolute; width:20px; height:20px; border:3px solid var(--teal); }
 .qr-corner.tl { top:-2px; left:-2px; border-right:0; border-bottom:0; border-radius:8px 0 0 0; }
 .qr-corner.tr { top:-2px; right:-2px; border-left:0; border-bottom:0; border-radius:0 8px 0 0; }
 .qr-corner.bl { bottom:-2px; left:-2px; border-right:0; border-top:0; border-radius:0 0 0 8px; }
 .qr-corner.br { bottom:-2px; right:-2px; border-left:0; border-top:0; border-radius:0 0 8px 0; }
-
 .qr-scan-line { position:absolute; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, var(--teal), transparent); top:0; animation:qrScan 2s infinite ease-in-out; }
 @keyframes qrScan { 0%,100% {top:0%} 50% {top:100%} }
-
 .qr-info { margin-top:30px; text-align:center; color:white; }
 .qr-title { font-family:'Space Mono', monospace; font-size:18px; letter-spacing:4px; color:var(--teal); margin-bottom:8px; }
-.qr-hint { font-size:12px; color:rgba(255,255,255,0.4); letter-spacing:1px; }
+.qr-hint { font-size:12px; color:rgba(255,255,255,0.4); letter-spacing:1px; line-height:1.6; max-width:280px; }
+.qr-btn { margin-top:20px; background:transparent; border:1px solid var(--teal); color:var(--teal); padding:10px 20px; border-radius:12px; font-family:'Space Mono', monospace; font-size:10px; cursor:pointer; letter-spacing:2px; }
 
-.qr-btn { margin-top:40px; background:transparent; border:1px solid var(--teal); color:var(--teal); padding:12px 24px; border-radius:12px; font-family:'Space Mono', monospace; font-size:11px; cursor:pointer; transition:all 0.2s; letter-spacing:2px; }
-.qr-btn:hover { background:rgba(20,184,166,0.1); transform:translateY(-2px); box-shadow:0 5px 15px rgba(20,184,166,0.2); }
-
-/* ── SCAN OVERLAY (Old loading screen) ── */
-#scan-overlay { position:fixed; inset:0; background:var(--navy); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:300; transition:opacity 0.7s; }
+/* ── SCAN OVERLAY (LOADING) ── */
+#scan-overlay { position:fixed; inset:0; background:var(--navy); display:none; flex-direction:column; align-items:center; justify-content:center; z-index:300; transition:opacity 0.7s; opacity:0; }
 .scan-logo { font-family:'Space Mono',monospace; color:var(--teal); font-size:26px; letter-spacing:6px; margin-bottom:4px; }
 .scan-sub  { color:rgba(255,255,255,0.35); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:28px; }
 .scan-frame { width:280px; height:200px; border:1.5px solid rgba(20,184,166,0.3); border-radius:8px; position:relative; overflow:hidden; background:rgba(20,184,166,0.03); }
@@ -63,40 +50,34 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
 .scan-fill { height:100%; background:var(--teal); border-radius:2px; width:0%; transition:width 0.4s ease; }
 
 /* ── APP SHELL ── */
-#app { display:none; flex-direction:column; height:100vh; opacity:0; transition:opacity 0.5s; }
+#app { display:none; flex-direction:column; height:100vh; opacity:0; transition:opacity 0.5s; background:#f0ede8; }
 #header { background:var(--navy); color:white; padding:0 16px; height:50px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
 .app-name { font-family:'Space Mono',monospace; color:var(--teal); font-size:18px; letter-spacing:3px; }
 .app-tagline { font-size:10px; color:rgba(255,255,255,0.3); margin-left:10px; letter-spacing:2px; }
 .floor-tabs { display:flex; gap:3px; background:rgba(255,255,255,0.07); padding:4px; border-radius:8px; }
 .floor-tab { background:transparent; border:none; color:rgba(255,255,255,0.45); font-size:11px; font-weight:600; padding:4px 14px; border-radius:6px; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
 .floor-tab.active { background:var(--teal); color:white; }
-.floor-tab:hover:not(.active) { background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.75); }
 #body { display:flex; flex:1; overflow:hidden; position:relative; }
 
 /* ── LEFT PANEL ── */
 #left-panel { width:220px; background:white; border-right:1px solid #e5e2dc; display:flex; flex-direction:column; flex-shrink:0; }
 .search-box { padding:12px; border-bottom:1px solid #f0ede8; }
 .search-wrap { position:relative; }
-.search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#aaa; font-size:13px; pointer-events:none; }
 .search-input { width:100%; background:#f5f2ed; border:1.5px solid #e8e4dc; border-radius:8px; padding:8px 10px 8px 32px; font-size:13px; color:#1a1a1a; font-family:'DM Sans',sans-serif; outline:none; transition:border-color 0.2s; }
 .search-input:focus { border-color:var(--teal); background:white; }
 .section-hd { font-size:10px; color:#aaa; letter-spacing:1.5px; text-transform:uppercase; font-weight:500; margin-bottom:8px; }
 .cats-section { padding:10px 12px; border-bottom:1px solid #f0ede8; }
 .cats-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
 .cat-btn { display:flex; align-items:center; gap:6px; background:#f5f2ed; border:1.5px solid transparent; border-radius:8px; padding:6px 8px; cursor:pointer; font-size:11px; color:#555; font-family:'DM Sans',sans-serif; transition:all 0.15s; }
-.cat-btn:hover { background:#ede9e3; }
 .cat-btn.active { border-color:var(--teal); background:rgba(20,184,166,0.07); color:var(--teal-d); font-weight:500; }
 .cat-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 .poi-section { flex:1; overflow-y:auto; padding:10px 12px; }
-.poi-section::-webkit-scrollbar { width:4px; }
-.poi-section::-webkit-scrollbar-thumb { background:#e0dcd6; border-radius:4px; }
 .poi-item { display:flex; align-items:center; gap:9px; padding:7px 8px; border-radius:8px; cursor:pointer; transition:background 0.15s; margin-bottom:3px; }
 .poi-item:hover { background:#f5f2ed; }
 .poi-item.selected { background:rgba(20,184,166,0.08); }
 .poi-ico { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
 .poi-name { font-size:12px; font-weight:500; color:#1a1a1a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .poi-type { font-size:11px; color:#aaa; }
-.no-results { text-align:center; color:#bbb; font-size:12px; padding:20px 8px; line-height:1.6; }
 
 /* ── MAP ── */
 #map-area { flex:1; position:relative; background:#e8e5df; overflow:hidden; }
@@ -105,10 +86,9 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
 .compass { position:absolute; bottom:70px; right:14px; width:28px; height:28px; background:rgba(255,255,255,0.85); border-radius:50%; border:1px solid #d0ccc4; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:600; color:#444; font-family:'Space Mono',monospace; z-index:10; }
 .map-legend { position:absolute; bottom:10px; right:10px; background:rgba(255,255,255,0.92); border-radius:8px; padding:7px 10px; font-size:10px; color:#666; border:1px solid #ddd9d2; z-index:10; }
 .leg-item { display:flex; align-items:center; gap:5px; margin-bottom:4px; }
-.leg-item:last-child { margin-bottom:0; }
 .leg-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 
-/* ── SHOP OFFERS DRAWER ── */
+/* ── SHOP DRAWER ── */
 #shop-drawer {
   position:absolute; top:0; right:0; bottom:0; width:310px;
   background:white; box-shadow:-6px 0 30px rgba(0,0,0,0.14);
@@ -117,53 +97,32 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
   border-left:1px solid #e5e2dc;
 }
 #shop-drawer.open { transform:translateX(0); }
-
 .drawer-header { padding:14px 16px 0; border-bottom:1px solid #f0ede8; flex-shrink:0; }
 .drawer-top { display:flex; align-items:flex-start; gap:12px; padding-bottom:12px; }
 .shop-badge { width:46px; height:46px; border-radius:13px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:20px; }
 .shop-dname { font-size:15px; font-weight:600; color:#1a1a1a; line-height:1.3; }
 .shop-floor-tag { display:inline-block; font-size:10px; background:#f5f2ed; color:#888; padding:2px 8px; border-radius:20px; margin-top:4px; letter-spacing:0.3px; }
 .drawer-close { margin-left:auto; background:#f5f2ed; border:none; cursor:pointer; width:30px; height:30px; border-radius:8px; font-size:15px; color:#888; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
-.drawer-close:hover { background:#ede9e3; color:#333; }
 
 .drawer-actions { display:flex; gap:8px; padding:10px 16px 12px; }
-.btn-nav { flex:1; padding:9px 12px; background:var(--teal); color:white; border:none; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-family:'DM Sans',sans-serif; transition:background 0.15s; }
-.btn-nav:hover { background:var(--teal-d); }
-.btn-save { width:38px; height:38px; background:#f5f2ed; border:none; border-radius:10px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:background 0.15s; }
-.btn-save:hover { background:#ede9e3; }
+.btn-nav { flex:1; padding:9px 12px; background:var(--teal); color:white; border:none; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-family:'DM Sans',sans-serif; }
 
 .offers-area { flex:1; overflow-y:auto; padding:12px 16px 16px; }
-.offers-area::-webkit-scrollbar { width:4px; }
-.offers-area::-webkit-scrollbar-thumb { background:#e0dcd6; border-radius:4px; }
 .offers-hd { font-size:10px; color:#aaa; letter-spacing:1.5px; text-transform:uppercase; font-weight:500; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
 .ai-pill { background:rgba(20,184,166,0.1); color:var(--teal-d); font-size:9px; padding:3px 8px; border-radius:20px; letter-spacing:0.3px; font-weight:600; border:1px solid rgba(20,184,166,0.2); display:flex; align-items:center; gap:4px; }
 
 /* Offer cards */
-.offer-card { border-radius:12px; padding:13px 14px 12px; margin-bottom:10px; position:relative; overflow:hidden; border:1px solid transparent; transition:box-shadow 0.15s, transform 0.15s; }
+.offer-card { border-radius:12px; padding:13px 14px 12px; margin-bottom:10px; position:relative; overflow:hidden; border:1px solid transparent; transition:all 0.15s; }
 .offer-card:hover { box-shadow:0 3px 14px rgba(0,0,0,0.08); transform:translateY(-1px); }
-.offer-card.hot    { background:#fff8f8; border-color:#fecaca; }
-.offer-card.deal   { background:#fffbf0; border-color:#fde68a; }
-.offer-card.new    { background:#f0fdf6; border-color:#bbf7d0; }
-.offer-card.member { background:#fdf4ff; border-color:#e9d5ff; }
-.offer-card.sale   { background:#eff6ff; border-color:#bfdbfe; }
-
+.offer-card.hot { background:#fff8f8; border-color:#fecaca; }
+.offer-card.new { background:#f0fdf6; border-color:#bbf7d0; }
 .offer-pill { font-size:9.5px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; padding:3px 9px; border-radius:20px; display:inline-flex; align-items:center; gap:5px; margin-bottom:8px; }
-.offer-pill.hot    { background:#fee2e2; color:#dc2626; }
-.offer-pill.deal   { background:#fef3c7; color:#d97706; }
-.offer-pill.new    { background:#dcfce7; color:#16a34a; }
-.offer-pill.member { background:#f3e8ff; color:#9333ea; }
-.offer-pill.sale   { background:#dbeafe; color:#2563eb; }
-
+.offer-pill.hot { background:#fee2e2; color:#dc2626; }
+.offer-pill.new { background:#dcfce7; color:#16a34a; }
 .offer-title { font-size:13.5px; font-weight:600; color:#111; line-height:1.4; margin-bottom:5px; }
 .offer-desc  { font-size:12px; color:#6b7280; line-height:1.55; }
 .offer-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
-.offer-exp   { font-size:10px; color:#bbb; display:flex; align-items:center; gap:4px; }
-.offer-code  { font-size:10px; font-family:'Space Mono',monospace; background:#f5f2ed; color:#555; padding:2px 8px; border-radius:5px; letter-spacing:0.5px; }
-
-/* Skeleton */
-.skeleton { background:linear-gradient(90deg,#f0ede8 25%,#e8e4df 50%,#f0ede8 75%); background-size:200% 100%; animation:shimmer 1.3s infinite; border-radius:6px; }
-@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-.sk-card { background:white; border:1px solid #f0ede8; border-radius:12px; padding:13px 14px; margin-bottom:10px; }
+.offer-exp   { font-size:10px; color:#bbb; }
 
 /* Info panel */
 #info-panel { display:none; background:var(--navy); color:white; padding:10px 16px; flex-shrink:0; flex-direction:row; align-items:center; gap:14px; border-top:2.5px solid var(--teal); min-height:62px; }
@@ -172,9 +131,7 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
 .info-name { font-size:14px; font-weight:600; color:white; }
 .info-meta { font-size:11px; color:rgba(255,255,255,0.45); margin-top:2px; }
 .info-dist { font-size:12px; color:var(--teal); font-family:'Space Mono',monospace; white-space:nowrap; text-align:right; }
-.info-dist small { display:block; font-size:10px; color:rgba(255,255,255,0.3); margin-top:1px; }
-.close-btn { background:rgba(255,255,255,0.1); border:none; color:rgba(255,255,255,0.5); cursor:pointer; padding:6px 10px; border-radius:6px; font-size:13px; transition:background 0.15s; font-family:'DM Sans',sans-serif; }
-.close-btn:hover { background:rgba(255,255,255,0.18); color:white; }
+.info-dist small { display:block; font-size:10px; color:rgba(255,255,255,0.3); }
 
 /* Map animations */
 @keyframes yahPulse { 0%,100%{r:10;opacity:0.3} 50%{r:18;opacity:0} }
@@ -185,82 +142,60 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
 </head>
 <body>
 
-    <!-- ══ QR SCANNER SCREEN ══ -->
+    <!-- ══ QR SCANNER GATE ── -->
     <div id="qr-screen">
         <div class="qr-video-container">
-            <!-- REAL CAMERA FEED -->
-            <div id="reader" style="width: 100%; height: 100%; background: #000; overflow: hidden; position: relative;"></div>
-            
-            <div class="qr-viewfinder" style="pointer-events: none; z-index: 10;">
-                <div class="qr-corner tl"></div>
-                <div class="qr-corner tr"></div>
-                <div class="qr-corner bl"></div>
-                <div class="qr-corner br"></div>
+            <div id="reader"></div>
+            <div class="qr-viewfinder">
+                <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
+                <div class="qr-corner bl"></div><div class="qr-corner br"></div>
                 <div class="qr-scan-line"></div>
             </div>
         </div>
         <div class="qr-info">
             <div class="qr-title">SCAN BLUEPRINT</div>
-            <div class="qr-hint">Position the MallNav QR code within the frame</div>
+            <div class="qr-hint">Position the MallNav QR code within the frame to unlock the map</div>
         </div>
-        <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px; width:100%; max-width:280px;">
-            <button class="qr-btn" style="margin-top:0;" onclick="startQRScan()">REFRESH CAMERA</button>
-            <button class="qr-btn" style="margin-top:0; border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.6);" onclick="document.getElementById('qr-input-file').click()">🖼️ SCAN FROM PHOTO</button>
-            <input type="file" id="qr-input-file" accept="image/*" style="display:none;" onchange="scanFile(this)">
-            
-            <div style="text-align:center; color:rgba(255,255,255,0.2); font-size:10px; font-family:'Space Mono'; margin:5px 0;">— OR —</div>
-            <div id="manual-input-box" style="display:flex; gap:8px;">
-                <input type="text" id="manual-code-input" placeholder="ENTER CODE" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:white; padding:10px; font-family:'Space Mono'; font-size:12px; outline:none; text-align:center;">
-                <button onclick="verifyAndLoad(document.getElementById('manual-code-input').value)" style="background:var(--teal); border:none; border-radius:8px; color:white; padding:0 15px; cursor:pointer; font-weight:bold;">GO</button>
+        <div style="margin-top:20px; display:flex; flex-direction:column; gap:8px; width:280px;">
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="manual-code-input" placeholder="ENTER CODE" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; color:white; padding:10px; font-family:'Space Mono'; font-size:12px; text-align:center; outline:none;">
+                <button onclick="verifyAndLoad(document.getElementById('manual-code-input').value)" style="background:var(--teal); border:none; border-radius:12px; color:white; padding:0 18px; cursor:pointer; font-weight:bold;">GO</button>
             </div>
+            <button class="qr-btn" onclick="document.getElementById('qr-input-file').click()">🖼️ UPLOAD FROM GALLERY</button>
+            <input type="file" id="qr-input-file" accept="image/*" style="display:none;" onchange="scanFile(this)">
         </div>
-
-        <!-- QR PREVIEW STATION (Back by request!) -->
-        <div id="qr-preview-station" style="margin-top:30px; display:flex; flex-direction:column; align-items:center; gap:12px; background:rgba(255,255,255,0.03); padding:20px; border-radius:20px; border:1px solid rgba(255,255,255,0.05); width:100%; max-width:280px;">
-            <div style="color:var(--teal); font-family:'Space Mono', monospace; font-size:10px; letter-spacing:2px; opacity:0.6;">MALL ACCESS CODE</div>
-            <div id="blueprint-qr" style="background:white; padding:12px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5);"></div>
-            <div style="color:white; font-size:12px; font-weight:600; font-family:'Space Mono';">MALL_NAV_2024</div>
-            <button class="qr-btn" style="margin-top:5px; padding:8px 15px; font-size:9px; width:100%;" onclick="downloadQR('MALL_NAV_2024')">📥 DOWNLOAD QR FOR PRINT</button>
-        </div>
-
+        
+        <!-- AUTO TEST LINK -->
         <div style="margin-top:20px;">
-            <a href="javascript:void(0)" onclick="verifyAndLoad('MALL_NAV_2024')" style="color:var(--teal); font-size:10px; text-decoration:none; opacity:0.4; font-family:'Space Mono', monospace;">AUTO-TEST (MALL_NAV_2024)</a>
+            <a href="javascript:void(0)" onclick="verifyAndLoad('MALL_NAV_2024')" style="color:var(--teal); font-size:9px; text-decoration:none; opacity:0.3; font-family:'Space Mono'; letter-spacing:1px;">BYPASS SCANNER (TEST: MALL_NAV_2024)</a>
         </div>
     </div>
 
-    <!-- ══ SCAN OVERLAY ══ -->
+    <!-- ══ SCAN OVERLAY (LOADING ANIMATION) ── -->
     <div id="scan-overlay">
         <div class="scan-logo">MALLNAV</div>
         <div class="scan-sub">Indoor Navigation System v2.0</div>
         <div class="scan-frame">
-            <div class="scan-grid"></div>
-            <div class="scan-line"></div>
-            <div class="sc tl"></div>
-            <div class="sc tr"></div>
-            <div class="sc bl"></div>
-            <div class="sc br"></div>
+            <div class="scan-grid"></div><div class="scan-line"></div>
+            <div class="sc tl"></div><div class="sc tr"></div><div class="sc bl"></div><div class="sc br"></div>
             <div id="blip-zone"></div>
         </div>
         <div class="scan-status" id="scan-status">Initializing scanner...</div>
-        <div class="scan-bar">
-            <div class="scan-fill" id="scan-fill"></div>
-        </div>
+        <div class="scan-bar"><div class="scan-fill" id="scan-fill"></div></div>
     </div>
 
-    <!-- ══ APP ══ -->
+    <!-- ══ APP SHELL ── -->
     <div id="app">
         <header id="header">
             <div style="display:flex;align-items:center">
                 <span class="app-name">MALLNAV</span>
                 <span class="app-tagline">INDOOR NAVIGATION</span>
             </div>
-            <div style="display:flex; align-items:center; gap:12px;">
-                <div class="floor-tabs">
-                    <button class="floor-tab active" onclick="switchFloor(0)">G</button>
-                    <button class="floor-tab" onclick="switchFloor(1)">1F</button>
-                    <button class="floor-tab" onclick="switchFloor(2)">2F</button>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div class="floor-tabs" id="floor-tabs-container">
+                    <!-- Dynamic Tabs -->
                 </div>
-                <button onclick="logout()" style="background:rgba(255,255,255,0.1); border:none; border-radius:8px; color:white; padding:6px 12px; font-size:11px; font-weight:600; cursor:pointer; font-family:'DM Sans';">LOGOUT</button>
+                <button onclick="logout()" style="background:rgba(255,255,255,0.1); border:none; border-radius:8px; color:white; padding:6px 14px; font-size:10px; font-weight:700; cursor:pointer; font-family:'DM Sans';">LOGOUT</button>
             </div>
         </header>
 
@@ -268,37 +203,17 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
             <aside id="left-panel">
                 <div class="search-box">
                     <div class="search-wrap">
-                        <span class="search-icon">🔍</span>
+                        <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#aaa; font-size:12px;">🔍</span>
                         <input class="search-input" type="text" id="search-inp" placeholder="Search places..." oninput="onSearch()">
                     </div>
                 </div>
                 <div class="cats-section">
                     <div class="section-hd">Categories</div>
                     <div class="cats-grid">
-                        <button class="cat-btn active" data-c="all" onclick="setCat('all')">
-                            <span class="cat-dot" style="background:#aaa"></span>All
-                        </button>
-                        <button class="cat-btn" data-c="washroom" onclick="setCat('washroom')">
-                            <span class="cat-dot" style="background:#3b82f6"></span>Washroom
-                        </button>
-                        <button class="cat-btn" data-c="food" onclick="setCat('food')">
-                            <span class="cat-dot" style="background:#f59e0b"></span>Food
-                        </button>
-                        <button class="cat-btn" data-c="exit" onclick="setCat('exit')">
-                            <span class="cat-dot" style="background:#22c55e"></span>Exit/Stairs
-                        </button>
-                        <button class="cat-btn" data-c="dustbin" onclick="setCat('dustbin')">
-                            <span class="cat-dot" style="background:#6b7280"></span>Dustbin
-                        </button>
-                        <button class="cat-btn" data-c="atm" onclick="setCat('atm')">
-                            <span class="cat-dot" style="background:#eab308"></span>ATM
-                        </button>
-                        <button class="cat-btn" data-c="medical" onclick="setCat('medical')">
-                            <span class="cat-dot" style="background:#ef4444"></span>Medical
-                        </button>
-                        <button class="cat-btn" data-c="elevator" onclick="setCat('elevator')">
-                            <span class="cat-dot" style="background:#a855f7"></span>Elevator
-                        </button>
+                        <button class="cat-btn active" data-c="all" onclick="setCat('all')"><span class="cat-dot" style="background:#aaa"></span>All</button>
+                        <button class="cat-btn" data-c="washroom" onclick="setCat('washroom')"><span class="cat-dot" style="background:#3b82f6"></span>Washroom</button>
+                        <button class="cat-btn" data-c="food" onclick="setCat('food')"><span class="cat-dot" style="background:#f59e0b"></span>Food</button>
+                        <button class="cat-btn" data-c="exit" onclick="setCat('exit')"><span class="cat-dot" style="background:#22c55e"></span>Exit</button>
                     </div>
                 </div>
                 <div class="poi-section">
@@ -317,8 +232,6 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
                     <div class="leg-item"><div class="leg-dot" style="background:#14b8a6"></div>You are here</div>
                     <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div>Washroom</div>
                     <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>Food stall</div>
-                    <div class="leg-item"><div class="leg-dot" style="background:#22c55e"></div>Exit / Stairs</div>
-                    <div class="leg-item" style="color:#14b8a6;font-weight:500">✦ Tap store for offers</div>
                 </div>
 
                 <!-- ══ SHOP DRAWER ══ -->
@@ -338,12 +251,11 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l18-9-9 18-2-8z"/></svg>
                             Get Directions
                         </button>
-                        <button class="btn-save" title="Save store">🔖</button>
                     </div>
                     <div class="offers-area">
                         <div class="offers-hd">
                             <span>Popular Offers</span>
-                            <span class="ai-pill"><span>✦</span> AI Generated</span>
+                            <span class="ai-pill"><span>✦</span> AI Powered</span>
                         </div>
                         <div id="offers-list"></div>
                     </div>
@@ -365,7 +277,6 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
     <!-- Scripts -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
