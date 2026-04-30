@@ -240,6 +240,60 @@ async function loadOffers(store) {
     }, 600);
 }
 
+// ═══════════════════ POI & SEARCH LOGIC ═══════════════════
+function filtered() {
+    const floor = FLOORS[curFloor];
+    if (!floor) return [];
+    return floor.pois.filter(p => {
+        const matchesCat = activeCat === 'all' || p.type === activeCat;
+        const matchesQuery = !query || p.name.toLowerCase().includes(query.toLowerCase()) || (p.desc && p.desc.toLowerCase().includes(query.toLowerCase()));
+        return matchesCat && matchesQuery;
+    });
+}
+
+function renderList() {
+    const list = document.getElementById('poi-list');
+    if (!list) return;
+    const pois = filtered();
+    
+    if (pois.length === 0) {
+        list.innerHTML = '<div class="no-results">No results found.<br>Try a different search or category.</div>';
+        return;
+    }
+
+    list.innerHTML = pois.map(p => {
+        const color = CAT_COLOR[p.type] || '#888';
+        const label = CAT_LABEL[p.type] || '?';
+        const isSel = selPOI === p.id;
+        return `
+            <div class="poi-item ${isSel ? 'selected' : ''}" onclick="selectPOI('${p.id}')">
+                <div class="poi-ico" style="background:${color}20; color:${color}">
+                    <span style="font-size:9px; font-weight:700">${label}</span>
+                </div>
+                <div style="flex:1; min-width:0">
+                    <div class="poi-name">${p.name}</div>
+                    <div class="poi-type">${CAT_NAME[p.type] || p.type} · ${p.desc}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function setCat(c) {
+    activeCat = c;
+    document.querySelectorAll('.cat-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.c === c);
+    });
+    renderMap();
+    renderList();
+}
+
+function onSearch() {
+    query = document.getElementById('search-inp').value;
+    renderMap();
+    renderList();
+}
+
 function logout() {
     document.getElementById('app').style.opacity = '0';
     setTimeout(() => {
@@ -249,12 +303,21 @@ function logout() {
     }, 500);
 }
 
-window.switchFloor = (i) => { curFloor = i; renderTabs(); renderMap(); };
+window.switchFloor = (i) => { 
+    curFloor = i; 
+    selPOI = null; 
+    selStore = null;
+    document.getElementById('info-panel').classList.remove('on');
+    document.getElementById('floor-badge').textContent = FLOORS[i].label + ' — ' + FLOORS[i].name;
+    renderTabs(); 
+    renderMap(); 
+    renderList();
+};
 window.closeDrawer = () => { selStore = null; document.getElementById('shop-drawer').classList.remove('open'); renderMap(); };
-window.clearSel = () => { selPOI = null; document.getElementById('info-panel').classList.remove('on'); renderMap(); };
+window.clearSel = () => { selPOI = null; document.getElementById('info-panel').classList.remove('on'); renderMap(); renderList(); };
 window.verifyAndLoad = verifyAndLoad;
 window.scanFile = scanFile;
 window.logout = logout;
-window.navToStore = () => alert("Navigating...");
-window.onSearch = () => { query = document.getElementById('search-inp').value; renderMap(); };
-window.setCat = (c) => { activeCat = c; renderMap(); };
+window.navToStore = () => alert("Navigating to store center...");
+window.onSearch = onSearch;
+window.setCat = setCat;
