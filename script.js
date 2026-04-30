@@ -61,60 +61,30 @@ async function scanFile(input) {
 async function verifyAndLoad(scannedCode) {
     const hintEl = document.querySelector('.qr-hint');
     const titleEl = document.querySelector('.qr-title');
-    let code = scannedCode.trim();
-    
-    // SMART FIX: If the QR is a link (like me-qr.com), extract the code or allow the link
-    if (code.includes('://')) {
-        console.log("Detected URL-wrapped QR code:", code);
-    }
-
     titleEl.textContent = 'VERIFYING...';
-    hintEl.textContent = `Checking: ${code.length > 20 ? code.substring(0,20)+'...' : code}`;
-    hintEl.style.color = "var(--teal)";
+    hintEl.textContent = `Matching: ${scannedCode}`;
 
     try {
-        if (!sb) throw new Error("Supabase is not initialized.");
-        
-        // Try exact match first
-        let { data, error } = await sb.from('blueprints').select('*').eq('qr_code', code).maybeSingle();
-        
-        // If not found and it was a URL, try searching the database for THAT specific URL too
-        if (!data && code.includes('://')) {
-            console.log("URL not in DB, checking for MALL_NAV_2024 fallback...");
-            // You could add logic here to extract "MALL_NAV_2024" if you want, 
-            // but the best way is to just allow the URL in the database.
-        }
+        if (!sb) throw new Error("Supabase Connection Fail");
+        const { data, error } = await sb.from('blueprints').select('*').eq('qr_code', scannedCode.trim()).single();
+        if (error || !data) throw new Error("Code not found in database.");
 
-        if (error) throw new Error(`Database: ${error.message}`);
+        // Gated Access Granted -> Show Loading Animation
+        document.getElementById('qr-screen').classList.add('hidden');
+        FLOORS = data.data.floors || [];
+        STORE_META = data.data.store_meta || {};
         
-        if (!data) {
-            throw new Error(`Access Denied: The code inside this QR is "${code}". It does not match your database.`);
-        }
-
-        // Success!
-        titleEl.textContent = 'ACCESS GRANTED';
-        hintEl.textContent = `Loading ${data.name}...`;
-        
-        setTimeout(() => {
-            document.getElementById('qr-screen').classList.add('hidden');
-            FLOORS = data.data.floors || [];
-            STORE_META = data.data.store_meta || {};
-            startBootSequence();
-        }, 800);
+        // Start the blueprint boot sequence (from user template)
+        startBootSequence();
         
     } catch (err) {
-        console.error("Auth Error:", err);
         titleEl.textContent = 'ACCESS DENIED';
         hintEl.textContent = err.message;
-        hintEl.style.color = "#ff4444";
-        
-        // Let them try again after a few seconds
         setTimeout(() => {
             titleEl.textContent = 'SCAN BLUEPRINT';
             hintEl.textContent = 'Position the MallNav QR code within the frame';
-            hintEl.style.color = "rgba(255,255,255,0.4)";
-            if (!html5QrCode?.isScanning) initCameraScanner();
-        }, 4000);
+            initCameraScanner();
+        }, 3000);
     }
 }
 
