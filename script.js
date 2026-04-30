@@ -34,7 +34,32 @@ let html5QrCode = null;
 // ═══════════════════ INITIALIZATION ═══════════════════
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(initCameraScanner, 800);
+    setTimeout(() => generatePreviewQR("MALL_NAV_2024"), 1000);
 });
+
+function generatePreviewQR(code) {
+    const container = document.getElementById('blueprint-qr');
+    if (!container) return;
+    container.innerHTML = "";
+    new QRCode(container, {
+        text: code,
+        width: 128,
+        height: 128,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+
+function downloadQR(code) {
+    const qrDiv = document.getElementById('blueprint-qr');
+    const img = qrDiv.querySelector('img');
+    if (!img) { alert("QR not ready!"); return; }
+    const link = document.createElement('a');
+    link.download = `MallNav_Code_${code}.png`;
+    link.href = img.src;
+    link.click();
+}
 
 function initCameraScanner() {
     if (typeof Html5Qrcode === 'undefined') return;
@@ -318,6 +343,7 @@ window.clearSel = () => { selPOI = null; document.getElementById('info-panel').c
 window.verifyAndLoad = verifyAndLoad;
 window.scanFile = scanFile;
 window.logout = logout;
+window.downloadQR = downloadQR;
 window.navToStore = () => alert("Navigating to store center...");
 window.onSearch = onSearch;
 window.setCat = setCat;
