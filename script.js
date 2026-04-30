@@ -1,7 +1,12 @@
 // ═══════════════════ DATABASE CONFIG (SUPABASE) ═══════════════════
 const SUPABASE_URL = "https://nqnmbliwewhbbposhnug.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xbm1ibGl3ZXdoYmJwb3NobnVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODM4NTcsImV4cCI6MjA5MzE1OTg1N30.1_srs7d8vB72ImYYGe38Wgj6LgUYMCSK2-omp7oNFLY";
-const supabase = (typeof supabase !== 'undefined') ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+// Global Supabase Client
+let sb = null;
+if (typeof supabase !== 'undefined') {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
 // ═══════════════════ CONSTANTS & CONFIG ═══════════════════
 const CAT_COLOR = { washroom:'#3b82f6', food:'#f59e0b', exit:'#22c55e', dustbin:'#6b7280', atm:'#eab308', medical:'#ef4444', elevator:'#a855f7', info:'#14b8a6' };
@@ -22,8 +27,8 @@ window.addEventListener('DOMContentLoaded', () => {
     if (qrContainer && typeof QRCode !== 'undefined') {
         new QRCode(qrContainer, {
             text: "MALL_NAV_2024",
-            width: 80,
-            height: 80,
+            width: 120,
+            height: 120,
             colorDark : "#1a2236",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
@@ -31,7 +36,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     // AUTO-START CAMERA FOR MOBILE
-    initCameraScanner();
+    setTimeout(initCameraScanner, 1000);
 });
 
 // ═══════════════════ HARDWARE CAMERA LOGIC ═══════════════════
@@ -77,55 +82,42 @@ function initCameraScanner() {
 
 function onScanSuccess(decodedText, decodedResult) {
     console.log(`Code matched: ${decodedText}`, decodedResult);
-    
-    // Stop the camera once we have a result
     if (html5QrCode) {
         html5QrCode.stop().then(() => {
-            console.log("Camera stopped.");
             verifyAndLoad(decodedText);
         });
     }
 }
 
-function onScanFailure(error) {
-    // This is called constantly while searching, usually safe to ignore
-    // console.warn(`QR error = ${error}`);
-}
+function onScanFailure(error) {}
 
 async function verifyAndLoad(scannedCode) {
     const statusEl = document.querySelector('.qr-hint');
     statusEl.textContent = 'Verifying blueprint...';
     
     try {
-        if (!supabase) throw new Error("Supabase client not initialized.");
+        if (!sb) throw new Error("Supabase client not initialized.");
         
-        // Query Supabase for the scanned code
-        const { data, error } = await supabase
+        const { data, error } = await sb
             .from('blueprints')
             .select('*')
             .eq('qr_code', scannedCode)
             .single();
         
         if (error) throw error;
-        if (!data) throw new Error("This QR code is not registered with MallNav.");
+        if (!data) throw new Error("This QR code is not registered.");
         
         loadBlueprint(data);
         
     } catch (err) {
         alert(err.message);
-        // Restart camera if verification fails
         initCameraScanner();
     }
 }
 
 // ═══════════════════ UI & ACTIONS ═══════════════════
 async function startQRScan() {
-    // This button now acts as a manual camera refresh
-    if (html5QrCode && html5QrCode.isScanning) {
-        alert("Camera is already active. Point it at a QR code.");
-    } else {
-        initCameraScanner();
-    }
+    initCameraScanner();
 }
 
 async function syncQRToDatabase(qrCodeString) {
@@ -134,15 +126,18 @@ async function syncQRToDatabase(qrCodeString) {
     new QRCode(tempDiv, { text: qrCodeString, width: 256, height: 256 });
 
     setTimeout(async () => {
-        const qrImageBase64 = tempDiv.querySelector('img').src;
-        const { error } = await supabase
+        const img = tempDiv.querySelector('img');
+        if (!img) return alert("Failed to generate QR image.");
+        const qrImageBase64 = img.src;
+        
+        const { error } = await sb
             .from('blueprints')
             .update({ qr_image: qrImageBase64 })
             .eq('qr_code', qrCodeString);
 
         if (error) console.error("Sync Error:", error);
         else alert("QR Code has been saved to your Supabase database!");
-    }, 500);
+    }, 1000);
 }
 
 async function downloadQR(qrCodeString) {
@@ -162,7 +157,6 @@ function loadBlueprint(blueprint) {
     const payload = blueprint.data || blueprint;
     FLOORS = payload.floors || [];
     STORE_META = payload.store_meta || {};
-    
     document.getElementById('qr-screen').classList.add('hidden');
     setTimeout(initScan, 500);
 }
