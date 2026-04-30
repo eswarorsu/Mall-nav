@@ -215,6 +215,14 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
             </div>
         </div>
 
+        <!-- QR PREVIEW STATION (Back by request!) -->
+        <div id="qr-preview-station" style="margin-top:30px; display:flex; flex-direction:column; align-items:center; gap:12px; background:rgba(255,255,255,0.03); padding:20px; border-radius:20px; border:1px solid rgba(255,255,255,0.05); width:100%; max-width:280px;">
+            <div style="color:var(--teal); font-family:'Space Mono', monospace; font-size:10px; letter-spacing:2px; opacity:0.6;">MALL ACCESS CODE</div>
+            <div id="blueprint-qr" style="background:white; padding:12px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5);"></div>
+            <div style="color:white; font-size:12px; font-weight:600; font-family:'Space Mono';">MALL_NAV_2024</div>
+            <button class="qr-btn" style="margin-top:5px; padding:8px 15px; font-size:9px; width:100%;" onclick="downloadQR('MALL_NAV_2024')">📥 DOWNLOAD QR FOR PRINT</button>
+        </div>
+
         <div style="margin-top:20px;">
             <a href="javascript:void(0)" onclick="verifyAndLoad('MALL_NAV_2024')" style="color:var(--teal); font-size:10px; text-decoration:none; opacity:0.4; font-family:'Space Mono', monospace;">AUTO-TEST (MALL_NAV_2024)</a>
         </div>

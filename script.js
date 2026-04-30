@@ -22,6 +22,19 @@ let html5QrCode = null;
 
 // ═══════════════════ INITIALIZATION ═══════════════════
 window.addEventListener('DOMContentLoaded', () => {
+    // Generate the QR code preview
+    const qrContainer = document.getElementById('blueprint-qr');
+    if (qrContainer && typeof QRCode !== 'undefined') {
+        new QRCode(qrContainer, {
+            text: "MALL_NAV_2024",
+            width: 140,
+            height: 140,
+            colorDark : "#1a2236",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    }
+
     // AUTO-START CAMERA FOR MOBILE
     setTimeout(initCameraScanner, 1000);
 });
@@ -168,6 +181,20 @@ async function startQRScan() {
     initCameraScanner();
 }
 
+async function downloadQR(qrCodeString) {
+    const qrDiv = document.getElementById('blueprint-qr');
+    const img = qrDiv.querySelector('img');
+    if (!img) {
+        alert("QR Code not ready. Please wait a second.");
+        return;
+    }
+    const link = document.createElement('a');
+    link.download = `MallNav_AccessCode_${qrCodeString}.png`;
+    link.href = img.src;
+    link.click();
+}
+
+window.downloadQR = downloadQR;
 function loadBlueprint(blueprint) {
     const payload = blueprint.data || blueprint;
     FLOORS = payload.floors || [];
