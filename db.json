@@ -6,8 +6,9 @@
       "qr_code": "MALL_NAV_2024",
       "data": {
         "floors": [
-          { "id":0, "label":"G", "name":"GROUND FLOOR",
-            "stores":[
+          {
+            "id": 0, "label": "G", "name": "GROUND FLOOR",
+            "stores": [
               {"id":"g_zara", "x":8,  "y":8,  "w":95, "h":68, "lbl":"Zara"},
               {"id":"g_hm",   "x":107,"y":8,  "w":100,"h":68, "lbl":"H&M"},
               {"id":"g_sp",   "x":8,  "y":80, "w":199,"h":88, "lbl":"Sports Direct"},
@@ -21,40 +22,90 @@
               {"id":"g_kfc",  "x":350,"y":215,"w":100,"h":82, "lbl":"KFC"},
               {"id":"g_mcd",  "x":258,"y":301,"w":192,"h":88, "lbl":"McDonald's"}
             ],
-            "pois":[
-              {"id":"g1", "name":"Men's Washroom",      "type":"washroom", "x":72,  "y":192, "desc":"West corridor"},
-              {"id":"g2", "name":"Women's Washroom",    "type":"washroom", "x":148, "y":192, "desc":"Center west"},
-              {"id":"g3", "name":"Information Desk",    "type":"info",     "x":235, "y":155, "desc":"Central hub"},
-              {"id":"g4", "name":"ATM — HDFC Bank",     "type":"atm",      "x":158, "y":108, "desc":"Northwest zone"},
-              {"id":"g5", "name":"Exit — North Gate",   "type":"exit",     "x":235, "y":8,   "desc":"Main north entrance"},
-              {"id":"g6", "name":"Exit — South Gate",   "type":"exit",     "x":235, "y":385, "desc":"South parking side"},
-              {"id":"g7", "name":"Exit — West Gate",    "type":"exit",     "x":8,   "y":192, "desc":"West side entrance"},
-              {"id":"g8", "name":"Exit — East Gate",    "type":"exit",     "x":490, "y":192, "desc":"East parking ramp"},
-              {"id":"g9", "name":"Dustbin",             "type":"dustbin",  "x":42,  "y":192, "desc":"West corridor"},
-              {"id":"g10","name":"Dustbin",             "type":"dustbin",  "x":430, "y":192, "desc":"East corridor"},
-              {"id":"g11","name":"Dustbin",             "type":"dustbin",  "x":235, "y":34,  "desc":"North corridor"},
-              {"id":"g12","name":"Dustbin",             "type":"dustbin",  "x":235, "y":362, "desc":"South corridor"},
-              {"id":"g13","name":"Elevator / Lift",     "type":"elevator", "x":235, "y":220, "desc":"Central elevator bank"},
-              {"id":"g14","name":"Medical Aid Post",    "type":"medical",  "x":408, "y":52,  "desc":"Northeast wing"},
-              {"id":"g15","name":"Food Stall — Subway", "type":"food",     "x":305, "y":258, "desc":"Food court area"},
-              {"id":"g16","name":"Chai Point",          "type":"food",     "x":57,  "y":258, "desc":"Southwest zone"},
-              {"id":"g17","name":"Washroom (Family)",   "type":"washroom", "x":328, "y":192, "desc":"East of center"}
+            "pois": [
+              {"id":"g1", "name":"Men's Washroom", "type":"washroom", "x":72, "y":192, "desc":"West corridor"},
+              {"id":"g2", "name":"Women's Washroom", "type":"washroom", "x":148, "y":192, "desc":"Center west"},
+              {"id":"g3", "name":"Information Desk", "type":"info", "x":235, "y":155, "desc":"Central hub"},
+              {"id":"g4", "name":"ATM — HDFC Bank", "type":"atm", "x":158, "y":108, "desc":"Northwest zone"},
+              {"id":"g5", "name":"Exit — North Gate", "type":"exit", "x":235, "y":8, "desc":"Main north entrance"},
+              {"id":"g6", "name":"Exit — South Gate", "type":"exit", "x":235, "y":385, "desc":"South parking side"},
+              {"id":"g7", "name":"Exit — West Gate", "type":"exit", "x":8, "y":192, "desc":"West side entrance"},
+              {"id":"g8", "name":"Exit — East Gate", "type":"exit", "x":490, "y":192, "desc":"East parking ramp"},
+              {"id":"g9", "name":"Dustbin", "type":"dustbin", "x":42, "y":192, "desc":"West corridor"},
+              {"id":"g10","name":"Dustbin", "type":"dustbin", "x":430, "y":192, "desc":"East corridor"},
+              {"id":"g11","name":"Dustbin", "type":"dustbin", "x":235, "y":34, "desc":"North corridor"},
+              {"id":"g12","name":"Dustbin", "type":"dustbin", "x":235, "y":362, "desc":"South corridor"},
+              {"id":"g13","name":"Elevator / Lift", "type":"elevator", "x":235, "y":220, "desc":"Central elevator bank"},
+              {"id":"g14","name":"Medical Aid Post", "type":"medical", "x":408, "y":52, "desc":"Northeast wing"},
+              {"id":"g15","name":"Food Stall — Subway", "type":"food", "x":305, "y":258, "desc":"Food court area"},
+              {"id":"g16","name":"Chai Point", "type":"food", "x":57, "y":258, "desc":"Southwest zone"},
+              {"id":"g17","name":"Washroom (Family)", "type":"washroom", "x":328, "y":192, "desc":"East of center"}
+            ]
+          },
+          {
+            "id": 1, "label": "1F", "name": "FIRST FLOOR",
+            "stores": [
+              {"id":"f_pvr", "x":8,  "y":8,  "w":100, "h":70, "lbl":"PVR Cinemas"},
+              {"id":"f_lif", "x":112,"y":8,  "w":95,  "h":70, "lbl":"Lifestyle"},
+              {"id":"f_kid", "x":8,  "y":82, "w":199, "h":85, "lbl":"Kids Play Zone"},
+              {"id":"f_ss",  "x":258, "y":8,  "w":100, "h":156,"lbl":"Shoppers Stop"},
+              {"id":"f_tit", "x":362, "y":8,  "w":88,  "h":75, "lbl":"Titan"},
+              {"id":"f_sw",  "x":362, "y":87, "w":88,  "h":77, "lbl":"Swarovski"},
+              {"id":"f_bat", "x":8,  "y":215, "w":95,  "h":82, "lbl":"Bata Shoes"},
+              {"id":"f_wd",  "x":107, "y":215, "w":100, "h":82, "lbl":"Woodland"},
+              {"id":"f_ham", "x":8,  "y":301, "w":199, "h":88, "lbl":"Hamleys Toys"},
+              {"id":"f_imx", "x":258, "y":215, "w":88,  "h":82, "lbl":"IMAX Lobby"},
+              {"id":"f_sbx", "x":350, "y":215, "w":100, "h":82, "lbl":"Starbucks"},
+              {"id":"f_fj",  "x":258, "y":301, "w":192, "h":88, "lbl":"Food Junction"}
+            ],
+            "pois": [
+              {"id":"f1", "name":"Men's Washroom", "type":"washroom", "x":72, "y":192, "desc":"Near staircase"},
+              {"id":"f2", "name":"Women's Washroom", "type":"washroom", "x":148, "y":192, "desc":"Near play zone"},
+              {"id":"f3", "name":"Elevator / Lift", "type":"elevator", "x":235, "y":220, "desc":"Central elevator"},
+              {"id":"f4", "name":"ATM — SBI", "type":"atm", "x":400, "y":52, "desc":"Northeast corner"},
+              {"id":"f9", "name":"Medical Aid", "type":"medical", "x":60, "y":52, "desc":"Northwest wing"},
+              {"id":"f10","name":"Food Stall — Dominos", "type":"food", "x":395, "y":260, "desc":"Near food junction"},
+              {"id":"f11","name":"Stairs — North", "type":"exit", "x":235, "y":8, "desc":"To ground floor"}
+            ]
+          },
+          {
+            "id": 2, "label": "2F", "name": "SECOND FLOOR",
+            "stores": [
+              {"id":"t_tan", "x":8,  "y":8,  "w":100, "h":68, "lbl":"Tanishq Jewels"},
+              {"id":"t_mal", "x":112, "y":8,  "w":95,  "h":68, "lbl":"Malabar Gold"},
+              {"id":"t_fur", "x":8,  "y":80, "w":199, "h":88, "lbl":"Furniture World"},
+              {"id":"t_rof", "x":258, "y":8,  "w":192, "h":156, "lbl":"Rooftop Café"},
+              {"id":"t_prk", "x":8,  "y":215, "w":199, "h":174,"lbl":"Parking Ramp"},
+              {"id":"t_f21", "x":258, "y":215, "w":92,  "h":82, "lbl":"Forever 21"},
+              {"id":"t_zud", "x":354, "y":215, "w":96,  "h":82, "lbl":"Zudio"},
+              {"id":"t_hom", "x":258, "y":301, "w":192, "h":88, "lbl":"Home Décor Co."}
+            ],
+            "pois": [
+              {"id":"t1", "name":"Men's Washroom", "type":"washroom", "x":72, "y":192, "desc":"Near elevator"},
+              {"id":"t2", "name":"Women's Washroom", "type":"washroom", "x":148, "y":192, "desc":"Near elevator"},
+              {"id":"t3", "name":"Elevator / Lift", "type":"elevator", "x":235, "y":220, "desc":"Central elevator"},
+              {"id":"t4", "name":"Parking Entrance", "type":"exit", "x":8, "y":305, "desc":"2nd floor parking"},
+              {"id":"t10","name":"Stairs — North", "type":"exit", "x":235, "y":8, "desc":"To 1st floor"}
             ]
           }
         ],
         "store_meta": {
-          "Zara":         { "color":"#1a1a2e", "emoji":"👗" },
-          "H&M":          { "color":"#d4001f", "emoji":"👕" },
-          "Sports Direct":{ "color":"#1a472a", "emoji":"⚽" },
-          "Apple Store":  { "color":"#444",    "emoji":"🍎" },
-          "Samsung":      { "color":"#1428a0", "emoji":"📱" },
-          "JBL Audio":    { "color":"#c0392b", "emoji":"🎧" },
-          "Café Coffee Day":{ "color":"#6f4e37", "emoji":"☕" },
-          "Lush":         { "color":"#1a7a4a", "emoji":"🌸" },
-          "Crossword Books":{ "color":"#7b341e", "emoji":"📚" },
-          "Food Court":   { "color":"#c0582a", "emoji":"🍽️" },
-          "KFC":          { "color":"#c8102e", "emoji":"🍗" },
-          "McDonald's":   { "color":"#da291c", "emoji":"🍔" }
+          "Zara": {"color":"#1a1a2e", "emoji":"👗"}, "H&M": {"color":"#d4001f", "emoji":"👕"},
+          "Sports Direct": {"color":"#1a472a", "emoji":"⚽"}, "Apple Store": {"color":"#444", "emoji":"🍎"},
+          "Samsung": {"color":"#1428a0", "emoji":"📱"}, "JBL Audio": {"color":"#c0392b", "emoji":"🎧"},
+          "Café Coffee Day": {"color":"#6f4e37", "emoji":"☕"}, "Lush": {"color":"#1a7a4a", "emoji":"🌸"},
+          "Crossword Books": {"color":"#7b341e", "emoji":"📚"}, "Food Court": {"color":"#c0582a", "emoji":"🍽️"},
+          "KFC": {"color":"#c8102e", "emoji":"🍗"}, "McDonald's": {"color":"#da291c", "emoji":"🍔"},
+          "PVR Cinemas": {"color":"#7c1010", "emoji":"🎬"}, "Lifestyle": {"color":"#a0185b", "emoji":"🛍️"},
+          "Kids Play Zone": {"color":"#c05000", "emoji":"🎠"}, "Shoppers Stop": {"color":"#1c2831", "emoji":"🛒"},
+          "Titan": {"color":"#2c3e50", "emoji":"⌚"}, "Swarovski": {"color":"#5d4c7c", "emoji":"💎"},
+          "Bata Shoes": {"color":"#a01818", "emoji":"👟"}, "Woodland": {"color":"#3e2820", "emoji":"🥾"},
+          "Hamleys Toys": {"color":"#b01010", "emoji":"🧸"}, "IMAX Lobby": {"color":"#10195e", "emoji":"🎥"},
+          "Starbucks": {"color":"#00704a", "emoji":"☕"}, "Food Junction": {"color":"#c24000", "emoji":"🍜"},
+          "Tanishq Jewels": {"color":"#9e7000", "emoji":"💍"}, "Malabar Gold": {"color":"#8b6914", "emoji":"🪙"},
+          "Furniture World": {"color":"#4e342e", "emoji":"🛋️"}, "Rooftop Café": {"color":"#2c3a47", "emoji":"🌇"},
+          "Parking Ramp": {"color":"#455a64", "emoji":"🅿️"}, "Forever 21": {"color":"#6a0040", "emoji":"✨"},
+          "Zudio": {"color":"#3c1a8a", "emoji":"👚"}, "Home Décor Co.": {"color":"#2e5e14", "emoji":"🏠"}
         }
       }
     }
