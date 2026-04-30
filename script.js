@@ -91,47 +91,39 @@ async function verifyAndLoad(scannedCode) {
     const titleEl = document.querySelector('.qr-title');
     
     titleEl.textContent = 'VERIFYING...';
-    hintEl.textContent = `Checking Database for: ${scannedCode}`;
+    hintEl.textContent = `Matching text: ${scannedCode}`;
     hintEl.style.color = '#14b8a6';
     
     try {
-        if (!sb) throw new Error("Database connection not established. Refresh and try again.");
+        if (!sb) throw new Error("Connection Error. Please refresh.");
         
-        console.log("📡 Querying Supabase for code:", scannedCode);
-        
-        // Fetch from database
+        // Use ONLY the text code for verification
         const { data, error } = await sb
             .from('blueprints')
-            .select('*')
-            .eq('qr_code', scannedCode)
+            .select('name, data') // Only fetch the name and the map data
+            .eq('qr_code', scannedCode) // Verification by TEXT match
             .single();
         
-        if (error) {
-            console.error("Database Query Error:", error);
-            throw new Error(`Code '${scannedCode}' not found in database.`);
+        if (error || !data) {
+            throw new Error(`The code '${scannedCode}' is not in the database.`);
         }
         
-        if (!data) throw new Error("No data found for this code.");
-        
-        console.log("✅ Match Found:", data.name);
-        
-        // Access Granted! Load the map
-        titleEl.textContent = 'ACCESS GRANTED';
+        // Success!
+        titleEl.textContent = 'MATCH FOUND';
         hintEl.textContent = `Unlocking ${data.name}...`;
         loadBlueprint(data);
         
     } catch (err) {
-        console.error("Verification failed:", err.message);
-        titleEl.textContent = 'SCAN FAILED';
+        console.error("Verification error:", err.message);
+        titleEl.textContent = 'INVALID CODE';
         titleEl.style.color = '#ef4444';
         hintEl.textContent = err.message;
         hintEl.style.color = '#ef4444';
         
-        // Wait 3 seconds and restart camera
         setTimeout(() => {
             titleEl.textContent = 'SCAN BLUEPRINT';
             titleEl.style.color = '#14b8a6';
-            hintEl.textContent = 'Position the MallNav QR code within the frame';
+            hintEl.textContent = 'Position the QR code text within the frame';
             hintEl.style.color = 'rgba(255,255,255,0.4)';
             initCameraScanner();
         }, 3000);
