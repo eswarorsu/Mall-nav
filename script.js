@@ -59,10 +59,11 @@ async function scanFile(input) {
 }
 
 async function verifyAndLoad(scannedCode) {
-    const hintEl = document.querySelector('.qr-hint');
+    const subtitleEl = document.querySelector('.qr-subtitle');
     const titleEl = document.querySelector('.qr-title');
-    titleEl.textContent = 'VERIFYING...';
-    hintEl.textContent = `Matching: ${scannedCode}`;
+    
+    if (titleEl) titleEl.textContent = 'VERIFYING...';
+    if (subtitleEl) subtitleEl.textContent = `Matching: ${scannedCode}`;
 
     try {
         if (!sb) throw new Error("Supabase Connection Fail");
@@ -74,15 +75,15 @@ async function verifyAndLoad(scannedCode) {
         FLOORS = data.data.floors || [];
         STORE_META = data.data.store_meta || {};
         
-        // Start the blueprint boot sequence (from user template)
+        // Start the blueprint boot sequence
         startBootSequence();
         
     } catch (err) {
-        titleEl.textContent = 'ACCESS DENIED';
-        hintEl.textContent = err.message;
+        if (titleEl) titleEl.textContent = 'ACCESS DENIED';
+        if (subtitleEl) subtitleEl.textContent = err.message;
         setTimeout(() => {
-            titleEl.textContent = 'SCAN BLUEPRINT';
-            hintEl.textContent = 'Position the MallNav QR code within the frame';
+            if (titleEl) titleEl.textContent = 'CHILLOUT';
+            if (subtitleEl) subtitleEl.textContent = 'Unlock Your Navigation';
             initCameraScanner();
         }, 3000);
     }
