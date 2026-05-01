@@ -304,12 +304,17 @@ function logout() {
     }, 500);
 }
 
+function toggleSidebar() {
+    document.getElementById('body').classList.toggle('sidebar-closed');
+}
+
 window.switchFloor = (i) => { 
     curFloor = i; 
     selPOI = null; 
     selStore = null;
     document.getElementById('info-panel').classList.remove('on');
-    document.getElementById('floor-badge').textContent = FLOORS[i].label + ' — ' + FLOORS[i].name;
+    const floorBadge = document.getElementById('floor-badge');
+    if (floorBadge) floorBadge.textContent = FLOORS[i].label + ' — ' + FLOORS[i].name;
     renderTabs(); 
     renderMap(); 
     renderList();
@@ -322,3 +327,4 @@ window.logout = logout;
 window.navToStore = () => alert("Navigating to store center...");
 window.onSearch = onSearch;
 window.setCat = setCat;
+window.toggleSidebar = toggleSidebar;

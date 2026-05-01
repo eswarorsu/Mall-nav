@@ -105,8 +105,21 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
 .floor-tab.active { background:var(--teal); color:white; }
 #body { display:flex; flex:1; overflow:hidden; position:relative; }
 
+/* ── SIDEBAR COLLAPSE ── */
+#body.sidebar-closed #left-panel { margin-left: -220px; }
+#body.sidebar-closed #toggle-sidebar { left: 10px; transform: rotate(180deg); }
+
+#toggle-sidebar {
+    position: absolute; left: 230px; top: 12px; width: 28px; height: 28px;
+    background: white; border: 1px solid #e5e2dc; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 100; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: #888; font-size: 14px;
+}
+#toggle-sidebar:hover { color: var(--teal); border-color: var(--teal); }
+
 /* ── LEFT PANEL ── */
-#left-panel { width:220px; background:white; border-right:1px solid #e5e2dc; display:flex; flex-direction:column; flex-shrink:0; }
+#left-panel { width:220px; background:white; border-right:1px solid #e5e2dc; display:flex; flex-direction:column; flex-shrink:0; transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1); }
 .search-box { padding:12px; border-bottom:1px solid #f0ede8; }
 .search-wrap { position:relative; }
 .search-input { width:100%; background:#f5f2ed; border:1.5px solid #e8e4dc; border-radius:8px; padding:8px 10px 8px 32px; font-size:13px; color:#1a1a1a; font-family:'DM Sans',sans-serif; outline:none; transition:border-color 0.2s; }
@@ -252,6 +265,7 @@ body { font-family:'DM Sans',sans-serif; background:#0a0e17; color:#1a1a1a; heig
         </header>
 
         <div id="body">
+            <button id="toggle-sidebar" onclick="toggleSidebar()" title="Toggle Sidebar">◀</button>
             <aside id="left-panel">
                 <div class="search-box">
                     <div class="search-wrap">
